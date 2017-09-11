@@ -1,0 +1,12 @@
+LICENSE.txt
+MANIFEST.in
+README.md
+setup.cfg
+setup.py
+another_validator.egg-info/PKG-INFO
+another_validator.egg-info/SOURCES.txt
+another_validator.egg-info/dependency_links.txt
+another_validator.egg-info/top_level.txt
+validator/__init__.py
+validator/tests.py
+validator/validators.py
