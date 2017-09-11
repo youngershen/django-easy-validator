@@ -1,0 +1,12 @@
+*.pyo
+*.pyc
+*.~
+.idea
+*.log
+.coverage
+.venv
+coverage
+build
+dist
+validator.egg-info
+__pycache__
