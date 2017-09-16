@@ -1,22 +1,14 @@
-# Always prefer setuptools over distutils
 from setuptools import setup, find_packages
-# To use a consistent encoding
-from codecs import open
 from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-# Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
-
 setup(
-    name='another-validator',
+    name='django-contrib-validator',
 
-    version='1.0.2',
+    version='1.0.3',
 
-    description='a python data validator',
-    long_description=long_description,
+    description='a django request POST/GET data validator',
 
     url='https://github.com/universalyouth/validator',
 
@@ -47,7 +39,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='a python data validator',
+    keywords='a django request POST/GET data validator',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().

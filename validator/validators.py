@@ -7,7 +7,7 @@
 class BaseValidator(type):
 
     def __init__(cls):
-        super()
+        super().__init__()
 
     def __new__(mcs, *args, **kwargs):
         pass
