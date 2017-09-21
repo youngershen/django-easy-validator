@@ -15,8 +15,7 @@ class BaseRule:
         self.value = value
         self.args = args
         self.status = True
-        if message:
-            self.message = message
+        self.message = message if message else self.message
 
     def check(self):
         raise NotImplementedError
@@ -52,11 +51,14 @@ class MetaValidator(type):
 
 class Validator(metaclass=MetaValidator):
 
+    messages = {}
+    info = {0: _('OK')}
+
     def __init__(self, data, request):
         self.data = deepcopy(data)
         self.request = request
-        self.status = False
-        self.code = 1
+        self.status = True
+        self.code = 0
         self.__message__ = {}
 
     def validate(self):
@@ -70,19 +72,25 @@ class Validator(metaclass=MetaValidator):
                 rule_name = rule.get('name')
                 params = rule.get('params')
                 rule_class = RULES.get(rule_name)
-                rule_instance = rule_class(name, value, *params, message=None)
+                message = self.message.get(name, {}).get(rule_name, None)
+                rule_instance = rule_class(name, value, *params, message=message)
                 rule_instance.check()
                 if not rule_instance.get_status():
                     self.status = False
                     self.set_message(name, rule_name, rule_instance.get_message())
-
-        print(validation)
+        else:
+            self.check() if self.status else ''
+            return self.status, self.code, self.get_message(), self.get_info()
 
     def get(self, name, default=None):
         return self.data.get(name, default)
 
     def check(self):
         pass
+
+    def get_info(self):
+        info = self.info.get(self.code, '') if self.status else ''
+        return info
 
     def get_message(self):
         return self.__message__
