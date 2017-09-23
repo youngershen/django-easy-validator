@@ -52,13 +52,19 @@ class MetaValidator(type):
 class Validator(metaclass=MetaValidator):
 
     messages = {}
-    info = {0: _('OK')}
+    info = {}
+
+    default_failed_code = -1
+    default_succeed_code = -2
+
+    default_failed_info = _('参数错误')
+    default_succeed_info = _('数据校验成功')
 
     def __init__(self, data, request):
         self.data = deepcopy(data)
         self.request = request
         self.status = True
-        self.code = 0
+        self.code = -1
         self.__message__ = {}
 
     def validate(self):
@@ -67,7 +73,6 @@ class Validator(metaclass=MetaValidator):
             name = item.get('name', '')
             value = item.get('value', '')
             rules = item.get('rules', [])
-
             for rule in rules:
                 rule_name = rule.get('name')
                 params = rule.get('params')
@@ -79,17 +84,24 @@ class Validator(metaclass=MetaValidator):
                     self.status = False
                     self.set_message(name, rule_name, rule_instance.get_message())
         else:
-            self.check() if self.status else ''
+            self.check() if self.status else None
             return self.status, self.code, self.get_message(), self.get_info()
 
     def get(self, name, default=None):
         return self.data.get(name, default)
 
     def check(self):
-        pass
+        self.status = True
+        self.code = -2
 
     def get_info(self):
-        info = self.info.get(self.code, '') if self.status else ''
+        if self.default_succeed_code == self.code:
+            info = self.default_succeed_info
+        elif self.default_failed_code == self.code:
+            info = self.default_failed_info
+        else:
+            info = self.info.get(self.code, '')
+
         return info
 
     def get_message(self):

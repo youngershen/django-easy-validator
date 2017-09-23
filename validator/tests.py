@@ -23,8 +23,8 @@ class RequiredValidator(Validator):
     }
 
     def check(self):
-        self.code = 0
-        pass
+        self.status = False
+        self.code = 1
 
 
 class RequiredValidator2(Validator):
@@ -42,17 +42,13 @@ class RequiredValidator2(Validator):
         1: _('用户名格式错误2'),
     }
 
-    def check(self):
-        self.code = 0
-        pass
-
 
 class Required(TestCase):
+
     def setUp(self):
         self.data1 = {
             'username': 'huahua'
         }
-
         self.data2 = {
             'username': ''
         }
@@ -61,14 +57,14 @@ class Required(TestCase):
         validator = RequiredValidator(self.data1, None)
         status, code, message, info = validator.validate()
 
-        assert status
-        assert code == 0
+        assert status is False
+        assert code == 1
         assert not message
-        assert info == '创建用户成功'
+        assert info == '用户名格式错误'
 
         validator = RequiredValidator2(self.data2, None)
         status, code, message, info = validator.validate()
         assert not status
-        assert code == 0
+        assert code == -1
         assert message
-        assert not info
+        assert info == '参数错误'
