@@ -10,10 +10,10 @@ setup(
 
     description='a django request POST/GET data validator',
 
-    url='https://github.com/universalyouth/validator',
+    url='https://github.com/youngershen/django-contrib-validator',
 
     # Author details
-    author='younger shen',
+    author='Younger Shen',
     author_email='younger.x.shen@gmail.com',
 
     # Choose your license
