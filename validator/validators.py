@@ -1,4 +1,4 @@
-# PROJECT : validator
+# PROJECT : django-contrib-validator
 # TIME : 17-9-11 下午3:00
 # AUTHOR : Younger Shen
 # EMAIL : younger.x.shen@gmail.com
@@ -7,8 +7,8 @@ from django.utils.translation import ugettext as _
 
 
 class BaseRule:
-    name = 'baserule'
-    message = _('i am the base rule')
+    name = 'base rule name'
+    message = _('i am the base rule, you never see me bro')
 
     def __init__(self, name, value, *args, message=None):
         self.name = name
@@ -57,8 +57,8 @@ class Validator(metaclass=MetaValidator):
     default_failed_code = -1
     default_succeed_code = -2
 
-    default_failed_info = _('参数错误')
-    default_succeed_info = _('数据校验成功')
+    default_failed_info = _('data is invalid')
+    default_succeed_info = _('data is valid')
 
     def __init__(self, data, request):
         self.data = deepcopy(data)
@@ -69,23 +69,9 @@ class Validator(metaclass=MetaValidator):
 
     def validate(self):
         validation = self.__get_validation__()
-        for item in validation:
-            name = item.get('name', '')
-            value = item.get('value', '')
-            rules = item.get('rules', [])
-            for rule in rules:
-                rule_name = rule.get('name')
-                params = rule.get('params')
-                rule_class = RULES.get(rule_name)
-                message = self.message.get(name, {}).get(rule_name, None)
-                rule_instance = rule_class(name, value, *params, message=message)
-                rule_instance.check()
-                if not rule_instance.get_status():
-                    self.status = False
-                    self.set_message(name, rule_name, rule_instance.get_message())
-        else:
-            self.check() if self.status else None
-            return self.status, self.code, self.get_message(), self.get_info()
+        self.__validate__(validation)
+        self.check() if self.status else None
+        return self.status, self.code, self.get_message(), self.get_info()
 
     def get(self, name, default=None):
         return self.data.get(name, default)
@@ -101,16 +87,33 @@ class Validator(metaclass=MetaValidator):
             info = self.default_failed_info
         else:
             info = self.info.get(self.code, '')
-
         return info
 
     def get_message(self):
         return self.__message__
 
     def set_message(self, name, rule, message):
-        if name not in self.__message__.keys():
-            self.__message__.update({name: {}})
+        self.__message__.update({name: {}}) if name not in self.__message__.keys() else None
         self.__message__[name].update({rule: message})
+
+    def __validate__(self, validation):
+        for item in validation:
+            name = item.get('name', '')
+            value = item.get('value', '')
+            rules = item.get('rules', [])
+            for rule in rules:
+                self.__check_rule__(rule, name, value)
+
+    def __check_rule__(self, rule, name, value):
+        rule_name = rule.get('name')
+        params = rule.get('params')
+        rule_class = RULES.get(rule_name)
+        message = self.message.get(name, {}).get(rule_name, None)
+        rule_instance = rule_class(name, value, *params, message=message)
+        rule_instance.check()
+        if not rule_instance.get_status():
+            self.status = False
+            self.set_message(name, rule_name, rule_instance.get_message())
 
     def __get_validation__(self):
         ret = []
