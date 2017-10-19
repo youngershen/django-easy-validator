@@ -8,7 +8,7 @@ from django.utils.translation import ugettext as _
 
 class BaseRule:
     name = 'base rule name'
-    message = _('i am the base rule, you never see me bro')
+    message = _('i am the base rule message, you never see me bro')
 
     def __init__(self, name, value, *args, message=None):
         self.name = name
@@ -77,19 +77,22 @@ class Validator(metaclass=MetaValidator):
             name = item.get('name', '')
             value = item.get('value', '')
             rules = item.get('rules', [])
-            for rule in rules:
-                self._check_rule(rule, name, value)
+            [self._check_rule(rule, name, value) for rule in rules]
 
-    def _check_rule(self, rule, name, value):
-        rule_name = rule.get('name')
-        params = rule.get('params')
+    def _get_rule(self, rule_info, name, value):
+        rule_name = rule_info.get('name')
+        params = rule_info.get('params')
         rule_class = RULES.get(rule_name)
         message = self.message.get(name, {}).get(rule_name, None)
-        rule_instance = rule_class(name, value, *params, message=message)
-        rule_instance.check()
-        if not rule_instance.get_status():
+        instance = rule_class(name, value, *params, message=message)
+        return instance
+
+    def _check_rule(self, rule_info, name, value):
+        rule = self._get_rule(rule_info, name, value)
+        rule.check()
+        if not rule.get_status():
             self.status = False
-            self.set_message(name, rule_name, rule_instance.get_message())
+            self.set_message(name, rule_info.get('name'), rule.get_message())
 
     def _get_validation(self):
         ret = []
@@ -101,11 +104,11 @@ class Validator(metaclass=MetaValidator):
         return ret
 
     def _get_rules(self, validation):
-        rules = map(self._get_rule, validation.split('|'))
+        rules = map(self._get_rule_info, validation.split('|'))
         return rules
 
     @staticmethod
-    def _get_rule(rule):
+    def _get_rule_info(rule):
         info = list(map(lambda s: s.strip(), rule.split(':')))
         name = info[0]
         params = map(lambda s: s.strip(), ''.join(info[1:]).split(','))
