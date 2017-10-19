@@ -6,6 +6,17 @@ from copy import deepcopy
 from django.utils.translation import ugettext as _
 
 
+class RuleNotFoundError(Exception):
+
+    message = _('{NAME} rule not found error')
+
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.message.format(NAME=self.name)
+
+
 class BaseRule:
     name = 'base rule name'
     message = _('i am the base rule message, you never see me bro')
@@ -51,9 +62,10 @@ class MetaValidator(type):
 
 class Validator(metaclass=MetaValidator):
 
-    def __init__(self, data, request):
+    def __init__(self, data, request=None, extra_rules=None):
         self.data = deepcopy(data)
         self.request = request
+        self.extra_rules = extra_rules
         self.status = True
         self._message = {}
 
@@ -82,10 +94,17 @@ class Validator(metaclass=MetaValidator):
     def _get_rule(self, rule_info, name, value):
         rule_name = rule_info.get('name')
         params = rule_info.get('params')
-        rule_class = RULES.get(rule_name)
+        rule_class = self._get_origin_rule(rule_name)
         message = self.message.get(name, {}).get(rule_name, None)
         instance = rule_class(name, value, *params, message=message)
         return instance
+
+    def _get_origin_rule(self, name):
+        rule = self.extra_rules.get(name, None) if self.extra_rules else default_rules.get(name, None)
+        if not rule:
+            raise RuleNotFoundError(name)
+        else:
+            return rule
 
     def _check_rule(self, rule_info, name, value):
         rule = self._get_rule(rule_info, name, value)
@@ -116,6 +135,6 @@ class Validator(metaclass=MetaValidator):
         return rules
 
 
-RULES = {
+default_rules = {
     'required': Required
 }
