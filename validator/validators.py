@@ -29,7 +29,13 @@ class BaseRule:
         self.message = message if message else self.message
 
     def check(self):
-        raise NotImplementedError
+        self.check_value() if self.value else self.check_null()
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
 
     def get_status(self):
         return self.status
@@ -39,11 +45,21 @@ class BaseRule:
 
 
 class Required(BaseRule):
-    name = 'required'
-    message = '{FIELD} is required'
+    message = '{FIELD} field is required'
 
-    def check(self):
-        self.status = not not self.value
+    def check_null(self):
+        self.status = False
+
+    def get_message(self):
+        return self.message.format(FIELD=self.name)
+
+
+class Accepted(BaseRule):
+    message = '{FIELD} field must in which of : yes or no'
+    flag = ['yes', 'no']
+
+    def check_value(self):
+        self.status = False if self.value and self.value.lower() not in self.flag else True
 
     def get_message(self):
         return self.message.format(FIELD=self.name)
@@ -67,7 +83,8 @@ class Validator(metaclass=MetaValidator):
         self.request = request
         self.extra_rules = extra_rules
         self.status = True
-        self._message = {}
+        self.message = {}
+        self.validate_message = {}
 
     def validate(self):
         validation = self._get_validation()
@@ -77,12 +94,15 @@ class Validator(metaclass=MetaValidator):
     def get(self, name, default=None):
         return self.data.get(name, default)
 
+    def get_status(self):
+        return self.status
+
     def get_message(self):
-        return self._message
+        return self.validate_message
 
     def set_message(self, name, rule, message):
-        self._message.update({name: {}}) if name not in self._message.keys() else None
-        self._message[name].update({rule: message})
+        self.validate_message.update({name: {}}) if name not in self.validate_message.keys() else None
+        self.validate_message[name].update({rule: message})
 
     def _validate(self, validation):
         for item in validation:
@@ -115,7 +135,7 @@ class Validator(metaclass=MetaValidator):
 
     def _get_validation(self):
         ret = []
-        for name, validation in getattr(self, 'validation').items():
+        for name, validation in self.validation.items():
             rules = self._get_rules(validation)
             value = self.get(name)
             data = {'name': name, 'value': value, 'rules': list(rules)}
@@ -136,5 +156,6 @@ class Validator(metaclass=MetaValidator):
 
 
 default_rules = {
-    'required': Required
+    'required': Required,
+    'accepted': Accepted
 }
