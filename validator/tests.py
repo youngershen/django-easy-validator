@@ -15,20 +15,6 @@ class RequiredValidator(Validator):
         }
     }
 
-    info = {
-        0: _('you succeed'),
-        1: _('you failed')
-    }
-
-    def check(self):
-        username = self.get('username')
-        if 'test' == username:
-            self.code = 0
-            self.status = True
-        else:
-            self.code = 1
-            self.status = False
-
 
 class Test(TestCase):
     def setUp(self):
@@ -42,33 +28,17 @@ class Test(TestCase):
             'username': 'test',
         }
 
-        data_invalid = {
-            'username': 'hello'
-        }
-
         data_empty = {
             'username': ''
         }
 
         self.validator_valid = RequiredValidator(data_valid, [])
-        self.validator_invalid = RequiredValidator(data_invalid, [])
         self.validator_empty = RequiredValidator(data_empty, [])
 
     def test_required(self):
-        status, code, message, info = self.validator_valid.validate()
-        assert status
-        assert 0 == code
-        assert not message
-        assert 'you succeed' == info
+        self.assertFalse(self.validator_empty.validate())
+        message = self.validator_empty.get_message()
+        self.assertDictEqual(message, {'username': {'required': 'username is required'}})
 
-        status, code, message, info = self.validator_invalid.validate()
-        assert not status
-        assert 1 == code
-        assert not message
-        assert 'you failed' == info
-
-        status, code, message, info = self.validator_empty.validate()
-        assert not status
-        assert -1 == code
-        assert 'username is required' == message['username']['required']
-        assert 'data is invalid' == info
+        self.assertFalse(self.validator_empty.validate())
+        self.assertDictEqual(message, {'username': {'required': 'username is required'}})
