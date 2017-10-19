@@ -51,43 +51,19 @@ class MetaValidator(type):
 
 class Validator(metaclass=MetaValidator):
 
-    messages = {}
-    info = {}
-
-    default_failed_code = -1
-    default_succeed_code = -2
-
-    default_failed_info = _('data is invalid')
-    default_succeed_info = _('data is valid')
-
     def __init__(self, data, request):
         self.data = deepcopy(data)
         self.request = request
         self.status = True
-        self.code = -1
         self._message = {}
 
     def validate(self):
         validation = self._get_validation()
         self._validate(validation)
-        self.check() if self.status else None
-        return self.status, self.code, self.get_message(), self.get_info()
+        return self.status
 
     def get(self, name, default=None):
         return self.data.get(name, default)
-
-    def check(self):
-        self.status = True
-        self.code = -2
-
-    def get_info(self):
-        if self.default_succeed_code == self.code:
-            info = self.default_succeed_info
-        elif self.default_failed_code == self.code:
-            info = self.default_failed_info
-        else:
-            info = self.info.get(self.code, '')
-        return info
 
     def get_message(self):
         return self._message
