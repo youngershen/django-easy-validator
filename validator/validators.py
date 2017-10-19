@@ -65,11 +65,11 @@ class Validator(metaclass=MetaValidator):
         self.request = request
         self.status = True
         self.code = -1
-        self.__message__ = {}
+        self._message = {}
 
     def validate(self):
-        validation = self.__get_validation__()
-        self.__validate__(validation)
+        validation = self._get_validation()
+        self._validate(validation)
         self.check() if self.status else None
         return self.status, self.code, self.get_message(), self.get_info()
 
@@ -90,21 +90,21 @@ class Validator(metaclass=MetaValidator):
         return info
 
     def get_message(self):
-        return self.__message__
+        return self._message
 
     def set_message(self, name, rule, message):
-        self.__message__.update({name: {}}) if name not in self.__message__.keys() else None
-        self.__message__[name].update({rule: message})
+        self._message.update({name: {}}) if name not in self._message.keys() else None
+        self._message[name].update({rule: message})
 
-    def __validate__(self, validation):
+    def _validate(self, validation):
         for item in validation:
             name = item.get('name', '')
             value = item.get('value', '')
             rules = item.get('rules', [])
             for rule in rules:
-                self.__check_rule__(rule, name, value)
+                self._check_rule(rule, name, value)
 
-    def __check_rule__(self, rule, name, value):
+    def _check_rule(self, rule, name, value):
         rule_name = rule.get('name')
         params = rule.get('params')
         rule_class = RULES.get(rule_name)
@@ -115,21 +115,21 @@ class Validator(metaclass=MetaValidator):
             self.status = False
             self.set_message(name, rule_name, rule_instance.get_message())
 
-    def __get_validation__(self):
+    def _get_validation(self):
         ret = []
         for name, validation in getattr(self, 'validation').items():
-            rules = self.__get_rules__(validation)
+            rules = self._get_rules(validation)
             value = self.get(name)
             data = {'name': name, 'value': value, 'rules': list(rules)}
             ret.append(data)
         return ret
 
-    def __get_rules__(self, validation):
-        rules = map(self.__get_rule__, validation.split('|'))
+    def _get_rules(self, validation):
+        rules = map(self._get_rule, validation.split('|'))
         return rules
 
     @staticmethod
-    def __get_rule__(rule):
+    def _get_rule(rule):
         info = list(map(lambda s: s.strip(), rule.split(':')))
         name = info[0]
         params = map(lambda s: s.strip(), ''.join(info[1:]).split(','))
