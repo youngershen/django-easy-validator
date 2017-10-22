@@ -59,7 +59,7 @@ class Accepted(BaseRule):
     flag = ['yes', 'no']
 
     def check_value(self):
-        self.status = False if self.value and self.value.lower() not in self.flag else True
+        self.status = False if self.value.lower() not in self.flag else True
 
     def get_message(self):
         return self.message.format(FIELD=self.name)
