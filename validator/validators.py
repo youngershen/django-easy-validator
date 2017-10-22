@@ -50,6 +50,8 @@ class Date(BaseRule):
     date_format = '%Y-%m-%d'
 
     def get_format(self):
+        print('test')
+        print(self.args)
         return self.args[0] if 1 == len(self.args) else self.date_format
 
     def check_value(self):
@@ -195,8 +197,9 @@ class Validator(metaclass=MetaValidator):
     def _get_rule_info(rule):
         info = list(map(lambda s: s.strip(), rule.split(':')))
         name = info[0]
-        params = map(lambda s: s.strip(), ''.join(info[1:]).split(','))
-        rules = {'name': name, 'params': list(params)}
+        params = list(map(lambda s: s.strip(), ''.join(info[1:]).split(',')))
+        params = params if len(params) > 0 and params[1] is not None else ()
+        rules = {'name': name, 'params': params}
         return rules
 
 
