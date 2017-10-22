@@ -2,6 +2,7 @@
 # TIME : 17-9-11 下午3:00
 # AUTHOR : Younger Shen
 # EMAIL : younger.x.shen@gmail.com
+import datetime
 from copy import deepcopy
 from django.utils.translation import ugettext as _
 
@@ -42,6 +43,50 @@ class BaseRule:
 
     def get_message(self):
         return self.message
+
+
+class Date(BaseRule):
+    message = _('{FIELD} field is not a valid date format as xxxx-xx-xx')
+    date_format = '%Y-%m-%d'
+
+    def get_format(self):
+        return self.args[0] if 1 == len(self.args) else self.date_format
+
+    def check_value(self):
+        date_format = self.get_format()
+        try:
+            datetime.datetime.strptime(self.value, date_format)
+        except ValueError:
+            self.status = False
+
+    def get_message(self):
+        return self.message.format(FIELD=self.name)
+
+
+class DateTime(BaseRule):
+    message = _('{FIELD} field is not a valid datetime format as xxxx-xx-xx xx:xx:xx')
+    datetime_format = '%Y-%m-%d %H-%M-%S'
+
+    def get_datetime_format(self):
+        return self.args[0] if 1 == len(self.args) else self.datetime_format
+
+    def check_value(self):
+        datetime_format = self.get_datetime_format()
+        try:
+            datetime.datetime.strptime(self.value, datetime_format)
+        except ValueError:
+            self.status = False
+
+    def get_message(self):
+        return self.message.format(FIELD=self.name)
+
+
+class DateTimeBefore(BaseRule):
+    pass
+
+
+class DatetTimeAfter(BaseRule):
+    pass
 
 
 class Required(BaseRule):
@@ -157,5 +202,8 @@ class Validator(metaclass=MetaValidator):
 
 default_rules = {
     'required': Required,
-    'accepted': Accepted
+    'accepted': Accepted,
+    'date': Date,
+    'datetime': DateTime
 }
+
