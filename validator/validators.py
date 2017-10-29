@@ -198,7 +198,7 @@ class Validator(metaclass=MetaValidator):
         info = list(map(lambda s: s.strip(), rule.split(':')))
         name = info[0]
         params = list(map(lambda s: s.strip(), ''.join(info[1:]).split(',')))
-        params = params if len(params) > 0 and params[1] is not None else ()
+        params = params if len(params) > 0 and params[0] is not None else ()
         rules = {'name': name, 'params': params}
         return rules
 
