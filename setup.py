@@ -6,11 +6,11 @@ here = path.abspath(path.dirname(__file__))
 setup(
     name='django-contrib-validator',
 
-    version='1.0.3',
+    version='1.0.7',
 
     description='a django request POST/GET data validator',
 
-    url='https://github.com/youngershen/django-contrib-validator',
+    url='https://github.com/django-fans/django-contrib-validator',
 
     # Author details
     author='Younger Shen',
