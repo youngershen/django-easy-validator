@@ -22,6 +22,10 @@ class DateValidator(DefaultDateValidator):
     birthday = 'required|date'
 
 
+class CustomDateValidator(DefaultDateValidator):
+    birthday = 'required|date:%Y'
+
+
 class DefaultDatetimeValidator(Validator):
     expired_at = 'required|datetime'
 
@@ -98,9 +102,19 @@ class Test(TestCase):
             'birthday': ''
         }
 
+        data_custom = {
+            'birthday': '1990'
+        }
+
+        data_custom_empty = {
+            'birthday': ''
+        }
+
         self.date_valid = DateValidator(data_valid)
         self.date_invalid = DateValidator(data_invalid)
         self.date_empty = DateValidator(data_empty)
+        self.date_custom = CustomDateValidator(data_custom)
+        self.date_custom_empty = CustomDateValidator(data_custom_empty)
 
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
@@ -131,6 +145,15 @@ class Test(TestCase):
 
         self.assertFalse(self.date_empty.validate())
         message = self.date_empty.get_message()
+        self.assertDictEqual(message, {
+            'birthday': {
+                'required': 'birthday is required'
+            }
+        })
+
+        self.assertTrue(self.date_custom.validate())
+        self.assertFalse(self.date_custom_empty.validate())
+        message = self.date_custom_empty.get_message()
         self.assertDictEqual(message, {
             'birthday': {
                 'required': 'birthday is required'
