@@ -50,9 +50,7 @@ class Date(BaseRule):
     date_format = '%Y-%m-%d'
 
     def get_format(self):
-        print('test')
-        print(self.args)
-        return self.args[0] if 1 == len(self.args) else self.date_format
+        return self.args[0] if 1 == len(self.args) and self.args[0] else self.date_format
 
     def check_value(self):
         date_format = self.get_format()
@@ -70,7 +68,7 @@ class DateTime(BaseRule):
     datetime_format = '%Y-%m-%d %H-%M-%S'
 
     def get_datetime_format(self):
-        return self.args[0] if 1 == len(self.args) else self.datetime_format
+        return self.args[0] if 1 == len(self.args) and self.args[0] else self.datetime_format
 
     def check_value(self):
         datetime_format = self.get_datetime_format()
@@ -130,7 +128,6 @@ class Validator(metaclass=MetaValidator):
         self.request = request
         self.extra_rules = extra_rules
         self.status = True
-        self.message = {}
         self.validate_message = {}
 
     def validate(self):
@@ -162,7 +159,7 @@ class Validator(metaclass=MetaValidator):
         rule_name = rule_info.get('name')
         params = rule_info.get('params')
         rule_class = self._get_origin_rule(rule_name)
-        message = self.message.get(name, {}).get(rule_name, None)
+        message = getattr(self, 'message', {}).get(name, {}).get(rule_name, None)
         instance = rule_class(name, value, *params, message=message)
         return instance
 

@@ -22,6 +22,16 @@ class DateValidator(DefaultDateValidator):
     birthday = 'required|date'
 
 
+class DefaultDatetimeValidator(Validator):
+    expired_at = 'required|datetime'
+
+    message = {
+        'expired_at': {
+            'required': _('expired_at is required'),
+        }
+    }
+
+
 class RequiredValidator(Validator):
     username = 'required'
 
@@ -90,7 +100,7 @@ class Test(TestCase):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
         message = self.required_empty.get_message()
-        self.assertDictEqual(message, {'username': {'required': 'username field is required'}})
+        self.assertDictEqual(message, {'username': {'required': 'username is required'}})
 
     def test_accepted(self):
         self.assertTrue(self.accepted_valid.validate())
@@ -107,4 +117,8 @@ class Test(TestCase):
         self.assertTrue(self.date_valid.validate())
         self.assertFalse(self.date_invalid.validate())
         message = self.date_invalid.get_message()
-        print(message)
+        self.assertDictEqual(message, {
+            'birthday': {
+                'date': 'birthday is not a valid date format string'
+            }
+        })
