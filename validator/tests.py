@@ -93,8 +93,14 @@ class Test(TestCase):
         data_invalid = {
             'birthday': 'nonce'
         }
+
+        data_empty = {
+            'birthday': ''
+        }
+
         self.date_valid = DateValidator(data_valid)
         self.date_invalid = DateValidator(data_invalid)
+        self.date_empty = DateValidator(data_empty)
 
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
@@ -120,5 +126,13 @@ class Test(TestCase):
         self.assertDictEqual(message, {
             'birthday': {
                 'date': 'birthday is not a valid date format string'
+            }
+        })
+
+        self.assertFalse(self.date_empty.validate())
+        message = self.date_empty.get_message()
+        self.assertDictEqual(message, {
+            'birthday': {
+                'required': 'birthday is required'
             }
         })
