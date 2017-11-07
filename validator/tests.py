@@ -106,6 +106,10 @@ class Test(TestCase):
             'birthday': '1990'
         }
 
+        data_custom_invalid = {
+            'birthday': '1990-12-12'
+        }
+
         data_custom_empty = {
             'birthday': ''
         }
@@ -114,6 +118,7 @@ class Test(TestCase):
         self.date_invalid = DateValidator(data_invalid)
         self.date_empty = DateValidator(data_empty)
         self.date_custom = CustomDateValidator(data_custom)
+        self.date_custom_invalid = CustomDateValidator(data_custom_invalid)
         self.date_custom_empty = CustomDateValidator(data_custom_empty)
 
     def test_required(self):
@@ -157,5 +162,13 @@ class Test(TestCase):
         self.assertDictEqual(message, {
             'birthday': {
                 'required': 'birthday is required'
+            }
+        })
+
+        self.assertFalse(self.date_custom_invalid.validate())
+        message = self.date_custom_invalid.get_message()
+        self.assertDictEqual(message, {
+            'birthday': {
+                'date': 'birthday is not a valid date format string'
             }
         })
