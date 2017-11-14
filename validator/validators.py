@@ -19,8 +19,9 @@ class RuleNotFoundError(Exception):
 
 
 class BaseRule:
-    name = 'base rule name'
-    message = _('i am the base rule message, you never see me bro')
+    rule_name = 'base_rule'
+    name = 'rule'
+    message = _('{FIELD} field is match rule {RULE_NAME}.')
 
     def __init__(self, name, value, *args, message=None):
         self.name = name
@@ -42,10 +43,33 @@ class BaseRule:
         return self.status
 
     def get_message(self):
-        return self.message
+        return self.message.format(FIELD=self.name, RULE_NAME=self.rule_name)
+
+    @classmethod
+    def get_rule_name(cls):
+        return cls.rule_name
+
+
+class ActiveURL(BaseRule):
+    rule_name = 'active_url'
+    message = '{FIELD field is not a active URL}'
+
+    def check_value(self):
+        pass
+
+
+class Filled(BaseRule):
+    rule_name = 'filled'
+    pass
+
+
+class Nullable(BaseRule):
+    rule_name = 'nullable'
+    pass
 
 
 class Date(BaseRule):
+    rule_name = 'date'
     message = _('{FIELD} field is not a valid date format as {FORMAT_STR}')
     format_str = '%Y-%m-%d'
 
@@ -64,7 +88,8 @@ class Date(BaseRule):
         return self.message.format(FIELD=self.name, FORMAT_STR=format_str)
 
 
-class DateTime(BaseRule):
+class Datetime(BaseRule):
+    rule_name = 'datetime'
     message = _('{FIELD} field is not a valid datetime format as {FORMAT_STR}')
     format_str = '%Y-%m-%d %H:%M:%S'
 
@@ -84,14 +109,21 @@ class DateTime(BaseRule):
 
 
 class DateTimeBefore(BaseRule):
+    rule_name = 'datetime_before'
     pass
 
 
 class DatetTimeAfter(BaseRule):
+    rule_name = 'datetime_after'
     pass
 
 
+class DatetimeRange(BaseRule):
+    rule_name = 'datetime_range'
+
+
 class Required(BaseRule):
+    rule_name = 'required'
     message = '{FIELD} field is required'
 
     def check_null(self):
@@ -102,6 +134,7 @@ class Required(BaseRule):
 
 
 class Accepted(BaseRule):
+    rule_name = 'accepted'
     message = '{FIELD} field must in which of : yes or no'
     flag = ['yes', 'no']
 
@@ -203,9 +236,9 @@ class Validator(metaclass=MetaValidator):
 
 
 default_rules = {
-    'required': Required,
-    'accepted': Accepted,
-    'date': Date,
-    'datetime': DateTime
+    Required.get_rule_name(): Required,
+    Accepted.get_rule_name(): Accepted,
+    Date.get_rule_name(): Date,
+    Datetime.get_rule_name(): Datetime
 }
 
