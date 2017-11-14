@@ -46,11 +46,11 @@ class BaseRule:
 
 
 class Date(BaseRule):
-    message = _('{FIELD} field is not a valid date format as xxxx-xx-xx')
-    date_format = '%Y-%m-%d'
+    message = _('{FIELD} field is not a valid date format as {FORMAT_STR}')
+    format_str = '%Y-%m-%d'
 
     def get_format(self):
-        return self.args[0] if 1 == len(self.args) and self.args[0] else self.date_format
+        return self.args[0] if 1 == len(self.args) and self.args[0] else self.format_str
 
     def check_value(self):
         date_format = self.get_format()
@@ -60,25 +60,27 @@ class Date(BaseRule):
             self.status = False
 
     def get_message(self):
-        return self.message.format(FIELD=self.name)
+        format_str = self.get_format()
+        return self.message.format(FIELD=self.name, FORMAT_STR=format_str)
 
 
 class DateTime(BaseRule):
-    message = _('{FIELD} field is not a valid datetime format as xxxx-xx-xx xx:xx:xx')
-    datetime_format = '%Y-%m-%d %H-%M-%S'
+    message = _('{FIELD} field is not a valid datetime format as {FORMAT_STR}')
+    format_str = '%Y-%m-%d %H:%M:%S'
 
-    def get_datetime_format(self):
-        return self.args[0] if 1 == len(self.args) and self.args[0] else self.datetime_format
+    def get_format(self):
+        return self.args[0] if 1 == len(self.args) and self.args[0] else self.format_str
 
     def check_value(self):
-        datetime_format = self.get_datetime_format()
+        datetime_format = self.get_format()
         try:
             datetime.datetime.strptime(self.value, datetime_format)
-        except ValueError:
+        except ValueError as e:
             self.status = False
 
     def get_message(self):
-        return self.message.format(FIELD=self.name)
+        format_str = self.get_format()
+        return self.message.format(FIELD=self.name, FORMAT_STR=format_str)
 
 
 class DateTimeBefore(BaseRule):

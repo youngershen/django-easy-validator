@@ -7,6 +7,29 @@ from django.test import TestCase
 from validator import Validator
 
 
+class DefaultDatetimeValidator(Validator):
+    created_at = 'required|datetime'
+
+    message = {
+        'created_at': {
+            'required': _('created_at is required'),
+            'datetime': _('created_at is not a valid datetime string')
+        }
+    }
+
+
+class DatetimeValidator(DefaultDatetimeValidator):
+    created_at = 'required|datetime'
+
+
+class CustomDatetimeValidator(DatetimeValidator):
+    created_at = 'required|datetime:%Y-%m-%d %H-%M-%S'
+
+    message = {
+
+    }
+
+
 class DefaultDateValidator(Validator):
     birthday = 'required|date'
 
@@ -56,6 +79,7 @@ class Test(TestCase):
         self.setup_required()
         self.setup_accepted()
         self.setup_date()
+        self.setup_datetime()
 
     def tearDown(self):
         pass
@@ -121,6 +145,32 @@ class Test(TestCase):
         self.date_custom_invalid = CustomDateValidator(data_custom_invalid)
         self.date_custom_empty = CustomDateValidator(data_custom_empty)
 
+    def setup_datetime(self):
+        data_valid = {
+            'created_at': '1990-12-12 05:05:06'
+        }
+        self.datetime_valid = DatetimeValidator(data_valid)
+
+        data_empty = {
+            'created_at': ''
+        }
+        self.datetime_empty = DatetimeValidator(data_empty)
+
+        data_invalid = {
+            'created_at': 'test'
+        }
+        self.datetime_invalid = DatetimeValidator(data_invalid)
+
+        custom_data_valid = {
+            'created_at': '1999-11-11 05-05-06'
+        }
+        self.datetime_custom_valid = CustomDatetimeValidator(custom_data_valid)
+
+        custom_data_invalid = {
+            'created_at': '1991'
+        }
+        self.datetime_custom_invalid = CustomDatetimeValidator(custom_data_invalid)
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -170,5 +220,34 @@ class Test(TestCase):
         self.assertDictEqual(message, {
             'birthday': {
                 'date': 'birthday is not a valid date format string'
+            }
+        })
+
+    def test_datetime(self):
+        self.assertTrue(self.datetime_valid.validate())
+
+        self.assertFalse(self.datetime_empty.validate())
+        message = self.datetime_empty.get_message()
+        self.assertDictEqual(message, {
+            'created_at': {
+                'required': 'created_at is required'
+            }
+        })
+
+        self.assertFalse(self.datetime_invalid.validate())
+        message = self.datetime_invalid.get_message()
+        self.assertDictEqual(message, {
+            'created_at': {
+                'datetime': 'created_at is not a valid datetime string'
+            }
+        })
+
+        self.assertTrue(self.datetime_custom_valid.validate())
+
+        self.assertFalse(self.datetime_custom_invalid.validate())
+        message = self.datetime_custom_invalid.get_message()
+        self.assertDictEqual(message, {
+            'created_at': {
+                'datetime': 'created_at field is not a valid datetime format as %Y-%m-%d %H-%M-%S'
             }
         })
