@@ -7,6 +7,17 @@ from django.test import TestCase
 from validator import Validator
 
 
+class DigitsValidator(Validator):
+    number = 'required|digits'
+
+    message = {
+        'number': {
+            'required': _('number is required'),
+            'digits': _('{VALUE} is not digits')
+        }
+    }
+
+
 class DefaultDatetimeValidator(Validator):
     created_at = 'required|datetime'
 
@@ -80,6 +91,7 @@ class Test(TestCase):
         self.setup_accepted()
         self.setup_date()
         self.setup_datetime()
+        self.setup_digits()
 
     def tearDown(self):
         pass
@@ -171,6 +183,16 @@ class Test(TestCase):
         }
         self.datetime_custom_invalid = CustomDatetimeValidator(custom_data_invalid)
 
+    def setup_digits(self):
+        data_valid_str = {'number': '0123456789'}
+        self.digits_valid_str = DigitsValidator(data_valid_str)
+
+        data_valid_int = {'number': 123456798}
+        self.digits_valid_int = DigitsValidator(data_valid_int)
+
+        data_invalid = {'number': 'abc1230'}
+        self.digits_invalid = DigitsValidator(data_invalid)
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -182,11 +204,11 @@ class Test(TestCase):
         self.assertFalse(self.accepted_invalid1.validate())
         message = self.accepted_invalid1.get_message()
         self.assertDictEqual(message, {'term': {'required': 'term field is required'},
-                                       'policy': {'accepted': 'policy field must in which of : yes or no'}})
+                                       'policy': {'accepted': 'hello of policy field must in which of : yes, no'}})
         self.assertFalse(self.accepted_invalid2.validate())
         message = self.accepted_invalid2.get_message()
-        self.assertDictEqual(message, {'term': {'accepted': 'term field must in which of : yes or no'},
-                                       'policy': {'accepted': 'policy field must in which of : yes or no'}})
+        self.assertDictEqual(message, {'term': {'accepted': 'hello of term field must in which of : yes, no'},
+                                       'policy': {'accepted': 'hello of policy field must in which of : yes, no'}})
 
     def test_date(self):
         self.assertTrue(self.date_valid.validate())
@@ -248,6 +270,18 @@ class Test(TestCase):
         message = self.datetime_custom_invalid.get_message()
         self.assertDictEqual(message, {
             'created_at': {
-                'datetime': 'created_at field is not a valid datetime format as %Y-%m-%d %H-%M-%S'
+                'datetime': '1991 of created_at field is not a valid datetime format as %Y-%m-%d %H-%M-%S'
+            }
+        })
+
+    def test_digits(self):
+        self.assertTrue(self.digits_valid_str.validate())
+        self.assertTrue(self.digits_valid_int.validate())
+
+        self.assertFalse(self.digits_invalid.validate())
+        message = self.digits_invalid.get_message()
+        self.assertDictEqual(message, {
+            'number': {
+                'digits': 'abc1230 is not digits'
             }
         })

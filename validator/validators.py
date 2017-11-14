@@ -2,6 +2,7 @@
 # TIME : 17-9-11 下午3:00
 # AUTHOR : Younger Shen
 # EMAIL : younger.x.shen@gmail.com
+import re
 import datetime
 from copy import deepcopy
 from django.utils.translation import ugettext as _
@@ -19,7 +20,7 @@ class RuleNotFoundError(Exception):
 
 class BaseRule:
     name = 'base_rule'
-    message = _('{FIELD} field is match rule {RULE_NAME}.')
+    message = _('{VALUE} of {FIELD} field is match rule {RULE_NAME}.')
 
     def __init__(self, field_name, field_value, *args, message=None):
         self.field_name = field_name
@@ -41,7 +42,7 @@ class BaseRule:
         return self.status
 
     def get_message(self):
-        return self.message.format(FIELD=self.field_name, RULE_NAME=self.name)
+        return self.message.format(FIELD=self.field_name, VALUE=self.field_value, RULE_NAME=self.name)
 
     @classmethod
     def get_name(cls):
@@ -50,6 +51,11 @@ class BaseRule:
 
 class Digits(BaseRule):
     name = 'digits'
+    message = _('{VALUE} of {FIELD} is not match digits')
+
+    def check_value(self):
+        digits_regex = r'[0-9]+'
+        self.status = True if re.match(digits_regex, str(self.field_value)) else False
 
 
 class Numberic(BaseRule):
@@ -76,7 +82,7 @@ class Nullable(BaseRule):
 
 class Date(BaseRule):
     name = 'date'
-    message = _('{FIELD} field is not a valid date format as {FORMAT_STR}')
+    message = _('{VALUE} of {FIELD} field is not a valid date format as {FORMAT_STR}')
     format_str = '%Y-%m-%d'
 
     def get_format(self):
@@ -91,12 +97,15 @@ class Date(BaseRule):
 
     def get_message(self):
         format_str = self.get_format()
-        return self.message.format(FIELD=self.field_name, FORMAT_STR=format_str)
+        return self.message.format(FIELD=self.field_name,
+                                   VALUE=self.field_value,
+                                   FORMAT_STR=format_str,
+                                   RULE_NAME=self.name)
 
 
 class Datetime(BaseRule):
     name = 'datetime'
-    message = _('{FIELD} field is not a valid datetime format as {FORMAT_STR}')
+    message = _('{VALUE} of {FIELD} field is not a valid datetime format as {FORMAT_STR}')
     format_str = '%Y-%m-%d %H:%M:%S'
 
     def get_format(self):
@@ -111,7 +120,10 @@ class Datetime(BaseRule):
 
     def get_message(self):
         format_str = self.get_format()
-        return self.message.format(FIELD=self.field_name, FORMAT_STR=format_str)
+        return self.message.format(FIELD=self.field_name,
+                                   VALUE=self.field_value,
+                                   FORMAT_STR=format_str,
+                                   RULE_NAME=self.name)
 
 
 class DateTimeBefore(BaseRule):
@@ -135,20 +147,23 @@ class Required(BaseRule):
     def check_null(self):
         self.status = False
 
-    def get_message(self):
-        return self.message.format(FIELD=self.field_name)
-
 
 class Accepted(BaseRule):
     name = 'accepted'
-    message = '{FIELD} field must in which of : yes or no'
+    message = '{VALUE} of {FIELD} field must in which of : {FLAGS}'
     flag = ['yes', 'no']
+
+    def get_flags(self):
+        return ', '.join(self.flag)
 
     def check_value(self):
         self.status = False if self.field_value.lower() not in self.flag else True
 
     def get_message(self):
-        return self.message.format(FIELD=self.field_name)
+        return self.message.format(FIELD=self.field_name,
+                                   VALUE=self.field_value,
+                                   FLAGS=self.get_flags(),
+                                   RULE_NAME=self.name)
 
 
 class MetaValidator(type):
