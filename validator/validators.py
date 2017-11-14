@@ -8,7 +8,6 @@ from django.utils.translation import ugettext as _
 
 
 class RuleNotFoundError(Exception):
-
     message = _('{NAME} rule not found error')
 
     def __init__(self, name):
@@ -19,19 +18,18 @@ class RuleNotFoundError(Exception):
 
 
 class BaseRule:
-    rule_name = 'base_rule'
-    name = 'rule'
+    name = 'base_rule'
     message = _('{FIELD} field is match rule {RULE_NAME}.')
 
-    def __init__(self, name, value, *args, message=None):
-        self.name = name
-        self.value = value
+    def __init__(self, field_name, field_value, *args, message=None):
+        self.field_name = field_name
+        self.field_value = field_value
         self.args = args
         self.status = True
         self.message = message if message else self.message
 
     def check(self):
-        self.check_value() if self.value else self.check_null()
+        self.check_value() if self.field_value else self.check_null()
 
     def check_value(self):
         pass
@@ -43,15 +41,23 @@ class BaseRule:
         return self.status
 
     def get_message(self):
-        return self.message.format(FIELD=self.name, RULE_NAME=self.rule_name)
+        return self.message.format(FIELD=self.field_name, RULE_NAME=self.name)
 
     @classmethod
-    def get_rule_name(cls):
-        return cls.rule_name
+    def get_name(cls):
+        return cls.name
+
+
+class Digits(BaseRule):
+    name = 'digits'
+
+
+class Numberic(BaseRule):
+    name = 'numberic'
 
 
 class ActiveURL(BaseRule):
-    rule_name = 'active_url'
+    name = 'active_url'
     message = '{FIELD field is not a active URL}'
 
     def check_value(self):
@@ -59,17 +65,17 @@ class ActiveURL(BaseRule):
 
 
 class Filled(BaseRule):
-    rule_name = 'filled'
+    name = 'filled'
     pass
 
 
 class Nullable(BaseRule):
-    rule_name = 'nullable'
+    name = 'nullable'
     pass
 
 
 class Date(BaseRule):
-    rule_name = 'date'
+    name = 'date'
     message = _('{FIELD} field is not a valid date format as {FORMAT_STR}')
     format_str = '%Y-%m-%d'
 
@@ -79,17 +85,17 @@ class Date(BaseRule):
     def check_value(self):
         date_format = self.get_format()
         try:
-            datetime.datetime.strptime(self.value, date_format)
+            datetime.datetime.strptime(self.field_value, date_format)
         except ValueError:
             self.status = False
 
     def get_message(self):
         format_str = self.get_format()
-        return self.message.format(FIELD=self.name, FORMAT_STR=format_str)
+        return self.message.format(FIELD=self.field_name, FORMAT_STR=format_str)
 
 
 class Datetime(BaseRule):
-    rule_name = 'datetime'
+    name = 'datetime'
     message = _('{FIELD} field is not a valid datetime format as {FORMAT_STR}')
     format_str = '%Y-%m-%d %H:%M:%S'
 
@@ -99,50 +105,50 @@ class Datetime(BaseRule):
     def check_value(self):
         datetime_format = self.get_format()
         try:
-            datetime.datetime.strptime(self.value, datetime_format)
-        except ValueError as e:
+            datetime.datetime.strptime(self.field_value, datetime_format)
+        except ValueError:
             self.status = False
 
     def get_message(self):
         format_str = self.get_format()
-        return self.message.format(FIELD=self.name, FORMAT_STR=format_str)
+        return self.message.format(FIELD=self.field_name, FORMAT_STR=format_str)
 
 
 class DateTimeBefore(BaseRule):
-    rule_name = 'datetime_before'
+    name = 'datetime_before'
     pass
 
 
 class DatetTimeAfter(BaseRule):
-    rule_name = 'datetime_after'
+    name = 'datetime_after'
     pass
 
 
 class DatetimeRange(BaseRule):
-    rule_name = 'datetime_range'
+    name = 'datetime_range'
 
 
 class Required(BaseRule):
-    rule_name = 'required'
+    name = 'required'
     message = '{FIELD} field is required'
 
     def check_null(self):
         self.status = False
 
     def get_message(self):
-        return self.message.format(FIELD=self.name)
+        return self.message.format(FIELD=self.field_name)
 
 
 class Accepted(BaseRule):
-    rule_name = 'accepted'
+    name = 'accepted'
     message = '{FIELD} field must in which of : yes or no'
     flag = ['yes', 'no']
 
     def check_value(self):
-        self.status = False if self.value.lower() not in self.flag else True
+        self.status = False if self.field_value.lower() not in self.flag else True
 
     def get_message(self):
-        return self.message.format(FIELD=self.name)
+        return self.message.format(FIELD=self.field_name)
 
 
 class MetaValidator(type):
@@ -236,9 +242,14 @@ class Validator(metaclass=MetaValidator):
 
 
 default_rules = {
-    Required.get_rule_name(): Required,
-    Accepted.get_rule_name(): Accepted,
-    Date.get_rule_name(): Date,
-    Datetime.get_rule_name(): Datetime
+    Required.get_name(): Required,
+    Accepted.get_name(): Accepted,
+    Date.get_name(): Date,
+    Datetime.get_name(): Datetime,
+    ActiveURL.get_name(): ActiveURL,
+    Filled.get_name(): Filled,
+    Nullable.get_name(): Nullable,
+    Numberic.get_name(): Numberic,
+    Digits.get_name(): Digits
 }
 
