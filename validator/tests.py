@@ -7,6 +7,15 @@ from django.test import TestCase
 from validator import Validator
 
 
+class DatetimeBeforeValidator(Validator):
+    birthday = 'date_before: 1990-12-12'
+    message = {
+        'birthday': {
+            'datetime_before': _('this is not my birthday')
+        }
+    }
+
+
 class ActiveURLValidator(Validator):
     url = 'active_url'
     message = {
@@ -112,6 +121,7 @@ class Test(TestCase):
         self.setup_digits()
         self.setup_numberic()
         self.setup_active_url()
+        self.setup_datetime_before()
 
     def tearDown(self):
         pass
@@ -231,6 +241,19 @@ class Test(TestCase):
         }
         self.invalid_active_url = ActiveURLValidator(active_url_invalid)
 
+    def setup_datetime_before(self):
+        valid_datetime_before = {
+            'birthday': '1989-12-12'
+        }
+
+        self.valid_datetime_before = DatetimeBeforeValidator(valid_datetime_before)
+
+        invalid_datetime_before = {
+            'birthday': '1991-12-12'
+        }
+
+        self.invalid_datetime_before = DatetimeBeforeValidator(invalid_datetime_before)
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -346,3 +369,5 @@ class Test(TestCase):
             }
         })
 
+    def test_datetime_before(self):
+        self.assertTrue(self.valid_datetime_before.validate())
