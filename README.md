@@ -1,4 +1,4 @@
-# another validator
+# django contrib validator
 
 ## usage
 
