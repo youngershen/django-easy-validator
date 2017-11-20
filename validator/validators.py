@@ -159,14 +159,58 @@ class DateBefore(BaseRule):
 class DateAfter(BaseRule):
     name = 'date_after'
     message = _('{VALUE} of {FIELD} is not after date {DATE}')
-    format_str = '%Y-%m-%d'
+    field_format_str = '%Y-%m-%d'
+    param_format_str = '%Y-%m-%d'
 
     def check_value(self):
-        pass
+        param_date = self._get_param_date()
+        field_date = self._get_field_date()
+        return field_date > param_date
+
+    def _get_param_date(self):
+        date_str = self.args[0]
+        date = datetime.datetime.strptime(date_str, self.param_format_str)
+        return date
+
+    def _get_field_date(self):
+        date = datetime.datetime.strptime(self.field_value, self.field_format_str)
+        return date
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value,
+                                   FIELD=self.field_name,
+                                   DATE=self.args[0])
 
 
 class DateRange(BaseRule):
-    pass
+    name = 'date_range'
+    message = _('{VALUE} of {FIELD} is not in range date of {BEGIN} to {END}')
+    field_format_str = '%Y-%m-%d'
+    param_format_str = '%Y-%m-%d'
+
+    def check_value(self):
+        begin, end = self._get_param_date()
+        date = self._get_field_date()
+        return begin < date < end
+
+    def _get_param_date(self):
+        begin_date_str = self.args[0]
+        begin_date = datetime.datetime.strptime(begin_date_str, self.param_format_str)
+
+        end_date_str = self.args[1]
+        end_date = datetime.datetime.strptime(end_date_str, self.param_format_str)
+
+        return begin_date, end_date
+
+    def _get_field_date(self):
+        date = datetime.datetime.strptime(self.field_value, self.field_format_str)
+        return date
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value,
+                                   FIELD=self.field_name,
+                                   BEGIN=self.args[0],
+                                   END=self.args[1])
 
 
 class DateTimeBefore(BaseRule):
