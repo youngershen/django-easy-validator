@@ -135,9 +135,27 @@ class Datetime(BaseRule):
                                    RULE_NAME=self.name)
 
 
+class DateBefore(BaseRule):
+    name = 'date_before'
+    message = _('{VALUE} of {FIELD} is not in range of {BEGIN} to {END}')
+    format_str = ''
+
+    def check_value(self):
+        pass
+
+
+class DateAfter(BaseRule):
+    pass
+
+
+class DateRange(BaseRule):
+    pass
+
+
 class DateTimeBefore(BaseRule):
     name = 'datetime_before'
-    pass
+    message = _('{VALUE} of {FIELD} is not in range of {BEGIN} to {END}')
+    format_str = ''
 
 
 class DatetTimeAfter(BaseRule):
