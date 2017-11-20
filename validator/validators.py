@@ -3,6 +3,7 @@
 # AUTHOR : Younger Shen
 # EMAIL : younger.x.shen@gmail.com
 import re
+import socket
 import datetime
 from copy import deepcopy
 from django.utils.translation import ugettext as _
@@ -73,15 +74,13 @@ class Numberic(BaseRule):
 
 class ActiveURL(BaseRule):
     name = 'active_url'
-    message = '{FIELD field is not a active URL}'
+    message = '{VALUE} of {FIELD} field is not a active URL'
 
     def check_value(self):
-        pass
-
-
-class Filled(BaseRule):
-    name = 'filled'
-    pass
+        try:
+            socket.gethostbyname(self.field_value)
+        except socket.gaierror:
+            self.status = False
 
 
 class Date(BaseRule):
@@ -350,7 +349,6 @@ default_rules = {
     Date.get_name(): Date,
     Datetime.get_name(): Datetime,
     ActiveURL.get_name(): ActiveURL,
-    Filled.get_name(): Filled,
     Numberic.get_name(): Numberic,
     Digits.get_name(): Digits
 }
