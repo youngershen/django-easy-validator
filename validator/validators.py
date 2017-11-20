@@ -84,11 +84,6 @@ class Filled(BaseRule):
     pass
 
 
-class Nullable(BaseRule):
-    name = 'nullable'
-    pass
-
-
 class Date(BaseRule):
     name = 'date'
     message = _('{VALUE} of {FIELD} field is not a valid date format as {FORMAT_STR}')
@@ -137,15 +132,37 @@ class Datetime(BaseRule):
 
 class DateBefore(BaseRule):
     name = 'date_before'
-    message = _('{VALUE} of {FIELD} is not in range of {BEGIN} to {END}')
-    format_str = ''
+    message = _('{VALUE} of {FIELD} is not before date {DATE}')
+    field_format_str = '%Y-%m-%d'
+    param_format_str = '%Y-%m-%d'
 
     def check_value(self):
-        pass
+        param_date = self._get_param_date()
+        field_date = self._get_field_date()
+        return field_date < param_date
+
+    def _get_param_date(self):
+        date_str = self.args[0] if len(self.args) == 1 else None
+        date = datetime.datetime.strptime(date_str, self.param_format_str)
+        return date
+
+    def _get_field_date(self):
+        date = datetime.datetime.strptime(self.field_value, self.field_format_str)
+        return date
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value,
+                                   FIELD=self.field_name,
+                                   DATE=self.args[0])
 
 
 class DateAfter(BaseRule):
-    pass
+    name = 'date_after'
+    message = _('{VALUE} of {FIELD} is not after date {DATE}')
+    format_str = '%Y-%m-%d'
+
+    def check_value(self):
+        pass
 
 
 class DateRange(BaseRule):
@@ -290,7 +307,6 @@ default_rules = {
     Datetime.get_name(): Datetime,
     ActiveURL.get_name(): ActiveURL,
     Filled.get_name(): Filled,
-    Nullable.get_name(): Nullable,
     Numberic.get_name(): Numberic,
     Digits.get_name(): Digits
 }
