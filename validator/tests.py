@@ -7,6 +7,24 @@ from django.test import TestCase
 from validator import Validator
 
 
+class ActiveURLValidator(Validator):
+    url = 'active_url'
+    message = {
+        'url': {
+            'active_url': _('{VALUE} is no a active url')
+        }
+    }
+
+
+class NumbericValidator(Validator):
+    number = 'numberic'
+    message = {
+        'number': {
+            'numberic': _('{VALUE} is not a number')
+        }
+    }
+
+
 class DigitsValidator(Validator):
     number = 'required|digits'
 
@@ -92,6 +110,8 @@ class Test(TestCase):
         self.setup_date()
         self.setup_datetime()
         self.setup_digits()
+        self.setup_numberic()
+        self.setup_active_url()
 
     def tearDown(self):
         pass
@@ -193,6 +213,24 @@ class Test(TestCase):
         data_invalid = {'number': 'abc1230'}
         self.digits_invalid = DigitsValidator(data_invalid)
 
+    def setup_numberic(self):
+        valid_data = {'number': 1234555}
+        self.numberic_valid = NumbericValidator(valid_data)
+
+        invalid_data = {'number': 'abc123'}
+        self.numberic_invalid = NumbericValidator(invalid_data)
+
+    def setup_active_url(self):
+        active_url_valid = {
+            'url': 'google.com'
+        }
+        self.valid_active_url = ActiveURLValidator(active_url_valid)
+
+        active_url_invalid = {
+            'url': 'not_a_domain.com'
+        }
+        self.invalid_active_url = ActiveURLValidator(active_url_invalid)
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -285,3 +323,26 @@ class Test(TestCase):
                 'digits': 'abc1230 is not digits'
             }
         })
+
+    def test_numberic(self):
+        self.assertTrue(self.numberic_valid.validate())
+
+        self.assertFalse(self.numberic_invalid.validate())
+        message = self.numberic_invalid.get_message()
+        self.assertDictEqual(message, {
+            'number': {
+                'numberic': _('abc123 is not a number')
+            }
+        })
+
+    def test_active_url(self):
+        self.assertTrue(self.valid_active_url.validate())
+
+        self.assertFalse(self.invalid_active_url.validate())
+        message = self.invalid_active_url.get_message()
+        self.assertDictEqual(message, {
+            'url': {
+                'active_url': 'not_a_domain.com is no a active url'
+            }
+        })
+
