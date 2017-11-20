@@ -60,6 +60,15 @@ class Digits(BaseRule):
 
 class Numberic(BaseRule):
     name = 'numberic'
+    message = _('{VALUE} of {FIELD} is not match numberic')
+
+    def check_value(self):
+        try:
+            int(str(self.field_value))
+        except ValueError:
+            self.status = False
+        else:
+            self.status = True
 
 
 class ActiveURL(BaseRule):
