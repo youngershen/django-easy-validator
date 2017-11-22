@@ -50,6 +50,23 @@ class BaseRule:
         return cls.name
 
 
+class Regex(BaseRule):
+    name = 'regex'
+    message = _('{VALUE} of {FIELD} is not mathc the pattern {REGEX}')
+
+    def check_value(self):
+        self.status = True if self._match() else False
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value, FIELD=self.field_name, REGEX=self._get_regex())
+
+    def _get_regex(self):
+        return self.args[0] if len(self.args) == 1 else None
+
+    def _match(self):
+        return re.match(self._get_regex(), self.field_value)
+
+
 class Digits(BaseRule):
     name = 'digits'
     message = _('{VALUE} of {FIELD} is not match digits')
@@ -138,7 +155,7 @@ class DateBefore(BaseRule):
     def check_value(self):
         param_date = self._get_param_date()
         field_date = self._get_field_date()
-        return field_date < param_date
+        self.status = field_date < param_date
 
     def _get_param_date(self):
         date_str = self.args[0] if len(self.args) == 1 else None
@@ -164,7 +181,7 @@ class DateAfter(BaseRule):
     def check_value(self):
         param_date = self._get_param_date()
         field_date = self._get_field_date()
-        return field_date > param_date
+        self.status = field_date > param_date
 
     def _get_param_date(self):
         date_str = self.args[0]
@@ -190,7 +207,7 @@ class DateRange(BaseRule):
     def check_value(self):
         begin, end = self._get_param_date()
         date = self._get_field_date()
-        return begin < date < end
+        self.status = begin < date < end
 
     def _get_param_date(self):
         begin_date_str = self.args[0]
@@ -351,6 +368,7 @@ default_rules = {
     DateAfter.get_name(): DateAfter,
     DateRange.get_name(): DateRange,
     Datetime.get_name(): Datetime,
+    DateTimeBefore.get_name(): DateTimeBefore,
     ActiveURL.get_name(): ActiveURL,
     Numberic.get_name(): Numberic,
     Digits.get_name(): Digits

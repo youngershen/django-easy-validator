@@ -7,11 +7,29 @@ from django.test import TestCase
 from validator import Validator
 
 
-class DatetimeBeforeValidator(Validator):
+class DateRangeValidator(Validator):
+    birthday = 'date_range:1990-12-12,1998-12-12'
+    message = {
+        'birthday': {
+            'date_range': _('this is not my fucking date range')
+        }
+    }
+
+
+class DateAfterValidator(Validator):
+    birthday = 'date_after: 1990-12-12'
+    message = {
+        'birthday': {
+            'date_after': _('this is not my birthday')
+        }
+    }
+
+
+class DateBeforeValidator(Validator):
     birthday = 'date_before: 1990-12-12'
     message = {
         'birthday': {
-            'datetime_before': _('this is not my birthday')
+            'date_before': _('this is not my birthday')
         }
     }
 
@@ -121,7 +139,9 @@ class Test(TestCase):
         self.setup_digits()
         self.setup_numberic()
         self.setup_active_url()
-        self.setup_datetime_before()
+        self.setup_date_before()
+        self.setup_date_after()
+        self.setup_date_range()
 
     def tearDown(self):
         pass
@@ -241,18 +261,41 @@ class Test(TestCase):
         }
         self.invalid_active_url = ActiveURLValidator(active_url_invalid)
 
-    def setup_datetime_before(self):
-        valid_datetime_before = {
+    def setup_date_before(self):
+        valid_date_before = {
             'birthday': '1989-12-12'
         }
 
-        self.valid_datetime_before = DatetimeBeforeValidator(valid_datetime_before)
+        self.valid_date_before = DateBeforeValidator(valid_date_before)
 
-        invalid_datetime_before = {
+        invalid_date_before = {
+            'birthday': '1999-12-12'
+        }
+
+        self.invalid_date_before = DateBeforeValidator(invalid_date_before)
+
+    def setup_date_after(self):
+        valid_date_after = {
             'birthday': '1991-12-12'
         }
 
-        self.invalid_datetime_before = DatetimeBeforeValidator(invalid_datetime_before)
+        invalid_date_after = {
+            'birthday': '1989-12-12'
+        }
+        self.valid_date_after = DateAfterValidator(valid_date_after);
+        self.invalid_date_after = DateAfterValidator(invalid_date_after)
+
+    def setup_date_range(self):
+        valid_date_range = {
+            'birthday': '1991-12-12'
+        }
+
+        invalid_date_range = {
+            'birthday': '1988-12-12'
+        }
+
+        self.valid_date_range = DateRangeValidator(valid_date_range)
+        self.invalid_date_range = DateRangeValidator(invalid_date_range)
 
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
@@ -369,5 +412,34 @@ class Test(TestCase):
             }
         })
 
-    def test_datetime_before(self):
-        self.assertTrue(self.valid_datetime_before.validate())
+    def test_date_before(self):
+        self.assertTrue(self.valid_date_before.validate())
+
+        self.assertFalse(self.invalid_date_before.validate())
+        message = self.invalid_date_before.get_message()
+        self.assertDictEqual(message, {
+            'birthday': {
+                'date_before': 'this is not my birthday'
+            }
+        })
+
+    def test_date_after(self):
+        self.assertTrue(self.valid_date_after.validate())
+
+        self.assertFalse(self.invalid_date_after.validate())
+        message = self.invalid_date_after.get_message()
+        self.assertDictEqual(message, {
+            'birthday': {
+                'date_after': 'this is not my birthday'
+            }
+        })
+
+    def test_date_range(self):
+        self.assertTrue(self.valid_date_range.validate())
+        self.assertFalse(self.invalid_date_range.validate())
+        message = self.invalid_date_range.get_message()
+        self.assertDictEqual(message, {
+            'birthday': {
+                'date_range': 'this is not my fucking date range'
+            }
+        })
