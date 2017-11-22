@@ -67,6 +67,15 @@ class Regex(BaseRule):
         return re.match(self._get_regex(), self.field_value)
 
 
+class Email(BaseRule):
+    name = 'email'
+    message = _('{VALUE} of {FIELD} is not an email address')
+    pattern = r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
+
+    def check_value(self):
+        self.status = True if re.match(self.pattern, self.field_value) else False
+
+
 class Digits(BaseRule):
     name = 'digits'
     message = _('{VALUE} of {FIELD} is not match digits')
@@ -371,6 +380,8 @@ default_rules = {
     DateTimeBefore.get_name(): DateTimeBefore,
     ActiveURL.get_name(): ActiveURL,
     Numberic.get_name(): Numberic,
-    Digits.get_name(): Digits
+    Digits.get_name(): Digits,
+    Regex.get_name(): Regex,
+    Email.get_name(): Email
 }
 
