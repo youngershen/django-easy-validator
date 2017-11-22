@@ -50,6 +50,36 @@ class BaseRule:
         return cls.name
 
 
+class MinLength(BaseRule):
+    name = 'min_length'
+    message = _('{VALUE} of {FIELD} is shotter than {MIN}')
+
+    def check_value(self):
+        self.status = len(self.field_value) >= int(self.args[0])
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value, FIELD=self.field_name, MIN=self.args[0])
+
+
+class MaxLength(BaseRule):
+    name = 'max_length'
+    message = _('{VALUE} of {FIELD} is longger than {MAX}')
+
+    def check_value(self):
+        self.status = len(self.field_value) <= int(self.args[0])
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value, FIELD=self.field_name, MAX=self.args[0])
+
+
+class IDS(BaseRule):
+    name = 'ids'
+
+
+class ChinaCellphone(BaseRule):
+    pass
+
+
 class Regex(BaseRule):
     name = 'regex'
     message = _('{VALUE} of {FIELD} is not mathc the pattern {REGEX}')
@@ -382,6 +412,9 @@ default_rules = {
     Numberic.get_name(): Numberic,
     Digits.get_name(): Digits,
     Regex.get_name(): Regex,
-    Email.get_name(): Email
+    Email.get_name(): Email,
+    MinLength.get_name(): MinLength,
+    MaxLength.get_name(): MaxLength,
+    IDS.get_name(): IDS
 }
 
