@@ -278,7 +278,7 @@ class DateRange(BaseRule):
                                    END=self.args[1])
 
 
-class DateTimeBefore(BaseRule):
+class DatetimeBefore(BaseRule):
     name = 'datetime_before'
     message = _('{VALUE} of {FIELD} is not before {DATETIME}')
     field_format_str = '%Y-%m-%d %H:%M:%S'
@@ -300,7 +300,7 @@ class DateTimeBefore(BaseRule):
         return datetime.datetime.strptime(datetime_str, self.param_format_str)
 
 
-class DatetTimeAfter(BaseRule):
+class DatetimeAfter(BaseRule):
     name = 'datetime_after'
     message = _('{VALUE} of {FIELD} is not after {DATETIME}')
     field_format_str = '%Y-%m-%d %H:%M:%S'
@@ -342,6 +342,7 @@ class DatetimeRange(BaseRule):
     def _get_param_datetime(self):
         datetime_str = self.args[0] if len(self.args) == 1 else None
         return datetime.datetime.strptime(datetime_str, self.param_format_str)
+
 
 class Required(BaseRule):
     name = 'required'
@@ -467,8 +468,9 @@ default_rules = {
     DateAfter.get_name(): DateAfter,
     DateRange.get_name(): DateRange,
     Datetime.get_name(): Datetime,
-    DateTimeBefore.get_name(): DateTimeBefore,
-    DatetTimeAfter.get_name(): DateTimeAfter,
+    DatetimeBefore.get_name(): DatetimeBefore,
+    DatetimeAfter.get_name(): DatetimeAfter,
+    DatetimeRange.get_name(): DatetimeRange,
     ActiveURL.get_name(): ActiveURL,
     Numberic.get_name(): Numberic,
     Digits.get_name(): Digits,
@@ -476,6 +478,7 @@ default_rules = {
     Email.get_name(): Email,
     MinLength.get_name(): MinLength,
     MaxLength.get_name(): MaxLength,
-    IDS.get_name(): IDS
+    IDS.get_name(): IDS,
+    Cellphone.get_name(): Cellphone
 }
 
