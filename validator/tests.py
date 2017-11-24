@@ -7,6 +7,16 @@ from django.test import TestCase
 from validator import Validator
 
 
+class RegexValidator(Validator):
+    string = 'regex:abc'
+
+    message = {
+        'string': {
+            'regex': _('the {VALUE} of field {FIELD} is not fix abc')
+        }
+    }
+
+
 class DateRangeValidator(Validator):
     birthday = 'date_range:1990-12-12,1998-12-12'
     message = {
@@ -142,6 +152,7 @@ class Test(TestCase):
         self.setup_date_before()
         self.setup_date_after()
         self.setup_date_range()
+        self.setup_regex()
 
     def tearDown(self):
         pass
@@ -297,6 +308,13 @@ class Test(TestCase):
         self.valid_date_range = DateRangeValidator(valid_date_range)
         self.invalid_date_range = DateRangeValidator(invalid_date_range)
 
+    def setup_regex(self):
+        valid_regex_data = {'string': 'abc'}
+        invalid_regex_data = {'string': 'def'}
+
+        self.valid_regex_validator = RegexValidator(valid_regex_data)
+        self.invalid_regex_validator = RegexValidator(invalid_regex_data)
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -443,3 +461,31 @@ class Test(TestCase):
                 'date_range': 'this is not my fucking date range'
             }
         })
+
+    def test_regex(self):
+        self.assertTrue(self.valid_regex_validator.validate())
+        self.assertFalse(self.invalid_regex_validator.validate())
+        message = self.invalid_regex_validator.get_message()
+        self.assertDictEqual(message, {
+            'string': {
+                'regex': 'the def of field string is not fix abc'
+            }
+        })
+
+    def test_email(self):
+        pass
+
+    def test_min_length(self):
+        pass
+
+    def test_max_length(self):
+        pass
+
+    def test_ids(self):
+        pass
+
+    def test_cellphone(self):
+        pass
+
+    def test_alphabet(self):
+        pass

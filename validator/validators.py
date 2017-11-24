@@ -488,6 +488,7 @@ default_rules = {
     MinLength.get_name(): MinLength,
     MaxLength.get_name(): MaxLength,
     IDS.get_name(): IDS,
-    Cellphone.get_name(): Cellphone
+    Cellphone.get_name(): Cellphone,
+    Alphabet.get_name(): Alphabet,
 }
 
