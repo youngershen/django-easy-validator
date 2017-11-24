@@ -74,9 +74,14 @@ class MaxLength(BaseRule):
 
 class IDS(BaseRule):
     name = 'ids'
+    message = _('{VALUE} of {FIELD} is not a id series')
+    regex = r'^([0-9]+,)+[0-9]+$'
+
+    def check_value(self):
+        self.status = True if re.match(self.regex, self.field_value) else False
 
 
-class ChinaCellphone(BaseRule):
+class Cellphone(BaseRule):
     pass
 
 
@@ -458,6 +463,7 @@ default_rules = {
     DateRange.get_name(): DateRange,
     Datetime.get_name(): Datetime,
     DateTimeBefore.get_name(): DateTimeBefore,
+    DatetTimeAfter.get_name(): DateTimeAfter,
     ActiveURL.get_name(): ActiveURL,
     Numberic.get_name(): Numberic,
     Digits.get_name(): Digits,
