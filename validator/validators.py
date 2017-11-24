@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 
 
 class RuleNotFoundError(Exception):
-    message = _('{NAME} rule not found error')
+    message = _('{NAME} rule not found !!!')
 
     def __init__(self, name):
         self.name = name
@@ -48,6 +48,15 @@ class BaseRule:
     @classmethod
     def get_name(cls):
         return cls.name
+
+
+class Alphabet(BaseRule):
+    name = 'alphabet'
+    regex = r'[a-z]+'
+    message = _('{VALUE} of {FIELD} is not alphabet')
+
+    def check_value(self):
+        self.status = True if re.match(self.regex, self.field_value) else False
 
 
 class MinLength(BaseRule):
