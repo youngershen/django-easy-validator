@@ -270,18 +270,68 @@ class DateRange(BaseRule):
 
 class DateTimeBefore(BaseRule):
     name = 'datetime_before'
-    message = _('{VALUE} of {FIELD} is not in range of {BEGIN} to {END}')
-    format_str = ''
+    message = _('{VALUE} of {FIELD} is not before {DATETIME}')
+    field_format_str = '%Y-%m-%d %H:%M:%S'
+    param_format_str = '%Y-%m-%d %H:%M:%S'
+
+    def check_value(self):
+        field_datetime = self._get_field_datetime()
+        param_datetime = self._get_param_datetime()
+        self.status = field_datetime < param_datetime
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value, FIELD=self.field_name, DATETIME=self.args[0])
+
+    def _get_field_datetime(self):
+        return datetime.datetime.strptime(self.field_value, self.field_format_str)
+
+    def _get_param_datetime(self):
+        datetime_str = self.args[0] if len(self.args) == 1 else None
+        return datetime.datetime.strptime(datetime_str, self.param_format_str)
 
 
 class DatetTimeAfter(BaseRule):
     name = 'datetime_after'
-    pass
+    message = _('{VALUE} of {FIELD} is not after {DATETIME}')
+    field_format_str = '%Y-%m-%d %H:%M:%S'
+    param_format_str = '%Y-%m-%d %H:%M:%S'
+
+    def check_value(self):
+        field_datetime = self._get_field_datetime()
+        begin, end = self._get_param_datetime()
+        self.status = end > field_datetime > begin
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value, FIELD=self.field_name, DATETIME=self.args[0])
+
+    def _get_field_datetime(self):
+        return datetime.datetime.strptime(self.field_value, self.field_format_str)
+
+    def _get_param_datetime(self):
+        begin_datetime_str = self.args[0] if len(self.args) == 2 else None
+        begin = datetime.datetime.strptime(begin_datetime_str, self.param_format_str)
+
+        end_datetime_str = self.args[1] if len(self.args) == 2 else None
+        end = datetime.datetime.strptime(end_datetime_str, self.param_format_str)
+
+        return begin, end
 
 
 class DatetimeRange(BaseRule):
     name = 'datetime_range'
+    message = _('{VALUE} of {FIELD} is not in range {BEGIN} to {END}')
+    field_format_str = '%Y-%m-%d %H:%M:%S'
+    param_format_str = '%Y-%m-%d %H:%M:%S'
 
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value, FIELD=self.field_name, BEGIN=self.args[0], END=self.args[1])
+
+    def _get_field_datetime(self):
+        return datetime.datetime.strptime(self.field_value, self.field_format_str)
+
+    def _get_param_datetime(self):
+        datetime_str = self.args[0] if len(self.args) == 1 else None
+        return datetime.datetime.strptime(datetime_str, self.param_format_str)
 
 class Required(BaseRule):
     name = 'required'
