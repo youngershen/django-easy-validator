@@ -82,7 +82,12 @@ class IDS(BaseRule):
 
 
 class Cellphone(BaseRule):
-    pass
+    name = 'cellphone'
+    regex = r'^([\+]?[0-9]{2})?1[0-9]{10}$'
+    message = _('{VALUE} of {FIELD} is not a cellphone number')
+
+    def check_value(self):
+        self.status = True if re.match(self.regex, self.field_value) else False
 
 
 class Regex(BaseRule):
