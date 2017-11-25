@@ -11,7 +11,7 @@ class MinLengthValidator(Validator):
     name = 'min_length:10'
     message = {
         'name': {
-            'min_length': _('')
+            'min_length': _('{VALUE} is shortter than {MIN}')
         }
     }
 
@@ -173,6 +173,7 @@ class Test(TestCase):
         self.setup_date_range()
         self.setup_regex()
         self.setup_email()
+        self.setup_min_length()
 
     def tearDown(self):
         pass
@@ -342,6 +343,18 @@ class Test(TestCase):
         self.valid_email_validator = EmailValidator(valid_email_data)
         self.invalid_email_validator = EmailValidator(invalid_email_data)
 
+    def setup_min_length(self):
+        valid_min_length_data = {
+            'name': 'youngershen'
+        }
+
+        invalid_min_length_data = {
+            'name': 'badname'
+        }
+
+        self.valid_min_length_validator = MinLengthValidator(valid_min_length_data)
+        self.invalid_min_length_validator = MinLengthValidator(invalid_min_length_data)
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -510,7 +523,14 @@ class Test(TestCase):
         })
 
     def test_min_length(self):
-        pass
+        self.assertTrue(self.valid_min_length_validator.validate())
+        self.assertFalse(self.invalid_min_length_validator.validate())
+        message = self.invalid_min_length_validator.get_message()
+        self.assertDictEqual(message, {
+            'name': {
+                'min_length': 'badname is shortter than 10'
+            }
+        })
 
     def test_max_length(self):
         pass
