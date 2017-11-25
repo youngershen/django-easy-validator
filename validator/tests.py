@@ -7,6 +7,25 @@ from django.test import TestCase
 from validator import Validator
 
 
+class MinLengthValidator(Validator):
+    name = 'min_length:10'
+    message = {
+        'name': {
+            'min_length': _('')
+        }
+    }
+
+
+class EmailValidator(Validator):
+    email = 'email'
+
+    message = {
+        'email': {
+            'email': _('{VALUE} is not an email address')
+        }
+    }
+
+
 class RegexValidator(Validator):
     string = 'regex:abc'
 
@@ -153,6 +172,7 @@ class Test(TestCase):
         self.setup_date_after()
         self.setup_date_range()
         self.setup_regex()
+        self.setup_email()
 
     def tearDown(self):
         pass
@@ -315,6 +335,13 @@ class Test(TestCase):
         self.valid_regex_validator = RegexValidator(valid_regex_data)
         self.invalid_regex_validator = RegexValidator(invalid_regex_data)
 
+    def setup_email(self):
+        valid_email_data = {'email': 'younger.x.shen@gmail.com'}
+        invalid_email_data = {'email': 'aabbccdd'}
+
+        self.valid_email_validator = EmailValidator(valid_email_data)
+        self.invalid_email_validator = EmailValidator(invalid_email_data)
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -473,7 +500,14 @@ class Test(TestCase):
         })
 
     def test_email(self):
-        pass
+        self.assertTrue(self.valid_email_validator.validate())
+        self.assertFalse(self.invalid_email_validator.validate())
+        message = self.invalid_email_validator.get_message()
+        self.assertDictEqual(message, {
+            'email': {
+                'email': 'aabbccdd is not an email address'
+            }
+        })
 
     def test_min_length(self):
         pass
