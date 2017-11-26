@@ -7,6 +7,15 @@ from django.test import TestCase
 from validator import Validator
 
 
+class MaxLengthValidator(Validator):
+    name = 'max_length:10'
+    message = {
+        'name': {
+            'max_length': _('{VALUE} is logger than {MAX}')
+        }
+    }
+
+
 class MinLengthValidator(Validator):
     name = 'min_length:10'
     message = {
@@ -174,6 +183,7 @@ class Test(TestCase):
         self.setup_regex()
         self.setup_email()
         self.setup_min_length()
+        self.setup_max_length()
 
     def tearDown(self):
         pass
@@ -355,6 +365,17 @@ class Test(TestCase):
         self.valid_min_length_validator = MinLengthValidator(valid_min_length_data)
         self.invalid_min_length_validator = MinLengthValidator(invalid_min_length_data)
 
+    def setup_max_length(self):
+        valid_max_length_data = {
+            'name': 'abc'
+        }
+
+        invalid_max_length_data = {
+            'name': '12345678901'
+        }
+        self.valid_max_length_validator = MaxLengthValidator(valid_max_length_data)
+        self.invalid_max_length_validator = MaxLengthValidator(invalid_max_length_data)
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -533,7 +554,8 @@ class Test(TestCase):
         })
 
     def test_max_length(self):
-        pass
+        self.assertTrue(self.valid_min_length_validator.validate())
+        self.assertFalse(self.invalid_max_length_validator.validate())
 
     def test_ids(self):
         pass
