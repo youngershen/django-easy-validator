@@ -364,7 +364,7 @@ class Required(BaseRule):
 class Accepted(BaseRule):
     name = 'accepted'
     message = '{VALUE} of {FIELD} field must in which of : {FLAGS}'
-    flag = ['yes', 'no']
+    flag = ['yes', 'no', 'true', 'false', '0', '1']
 
     def get_flags(self):
         return ', '.join(self.flag)

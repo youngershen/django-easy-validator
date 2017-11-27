@@ -63,6 +63,8 @@ install using source code:
 - [date_after](#date_after)
 - [date_range](#date_range)
 
+--------------------------------------------------------------
+
 ### required
 
 ```python
@@ -75,7 +77,27 @@ the field with required rule cant be null or empty.
 
 ### accepted
 
+```python
+    class LoginValidator(Validator):
+        username = 'required'
+        remember_me = 'accepted'
+```
+
+the field with accepted must be one of the following strings, and the
+string case is insensitive.
+
+```python
+    ['yes', 'no', 'true', 'false', '0', '1']
+``` 
+
 ### date
+
+```python
+    class RegisterValidator(Validator):
+        birthday = 'required|date:%Y-%m-%d'
+```
+
+
 
 ### date_before
 
@@ -85,5 +107,5 @@ the field with required rule cant be null or empty.
 
 ## Advanced Topic
 
-## advanced topic
+advanced topic
 
