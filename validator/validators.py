@@ -50,6 +50,23 @@ class BaseRule:
         return cls.name
 
 
+class Switch(BaseRule):
+    name = 'switch'
+    message = _('{VALUE} of {FIELD} is not in [{SWITCH}]')
+
+    def check_value(self):
+        self.status = self.field_value in self._get_params()
+
+    def get_message(self):
+        switch_str = ','.join(self._get_params())
+        return self.message.format(VALUE=self.field_value,
+                                   FIELD=self.field_name,
+                                   SWITCH=switch_str)
+
+    def _get_params(self):
+        return self.args if self.args else []
+
+
 class Alphabet(BaseRule):
     name = 'alphabet'
     regex = r'[a-z]+'
@@ -490,5 +507,6 @@ default_rules = {
     IDS.get_name(): IDS,
     Cellphone.get_name(): Cellphone,
     Alphabet.get_name(): Alphabet,
+    Switch.get_name(): Switch
 }
 
