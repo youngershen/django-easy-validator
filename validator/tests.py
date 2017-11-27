@@ -7,6 +7,24 @@ from django.test import TestCase
 from validator import Validator
 
 
+class AlphabetValidator(Validator):
+    string = 'alphabet'
+    message = {
+        'string': {
+            'alphabet': _('{VALUE} of {FIELD} is not an alphabet series')
+        }
+    }
+
+
+class CellphoneValidator(Validator):
+    cellphone = 'cellphone'
+    message = {
+        'cellphone': {
+            'cellphone': _('{VALUE} of {FIELD} is not a cellphone')
+        }
+    }
+
+
 class IDSValidator(Validator):
     id_array = 'ids'
     message = {
@@ -194,6 +212,8 @@ class Test(TestCase):
         self.setup_min_length()
         self.setup_max_length()
         self.setup_ids()
+        self.setup_cellphone()
+        self.setup_alphabet()
 
     def tearDown(self):
         pass
@@ -398,6 +418,42 @@ class Test(TestCase):
         self.valid_ids_validator = IDSValidator(valid_ids_data)
         self.invalid_ids_validator = IDSValidator(invalid_ids_data)
 
+    def setup_cellphone(self):
+        valid_cellphone_data1 = {
+            'cellphone': '+8613581921363'
+        }
+
+        valid_cellphone_data2 = {
+            'cellphone': '8613581921363'
+        }
+
+        valid_cellphone_data3 = {
+            'cellphone': '13581921363'
+        }
+
+        invalid_cellphone_data = {
+            'cellphone': 'not a cellphone'
+        }
+
+        self.valid_cellphone_validator1 = CellphoneValidator(valid_cellphone_data1)
+        self.valid_cellphone_validator2 = CellphoneValidator(valid_cellphone_data2)
+        self.valid_cellphone_validator3 = CellphoneValidator(valid_cellphone_data3)
+        self.invalid_cellphone_validator = CellphoneValidator(invalid_cellphone_data)
+
+    def setup_alphabet(self):
+        valid_alphabet_data = {
+            'string': 'abcdef'
+        }
+
+        invalid_alphabet_data = {
+            'string': '123455'
+        }
+
+        self.valid_alphabet_validator = AlphabetValidator(valid_alphabet_data)
+        self.invalid_alphabet_validator = AlphabetValidator(invalid_alphabet_data)
+
+###################################################################################################
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -589,7 +645,21 @@ class Test(TestCase):
         })
 
     def test_cellphone(self):
-        pass
+        self.assertTrue(self.valid_cellphone_validator1.validate())
+        self.assertTrue(self.valid_cellphone_validator1.validate())
+        self.assertTrue(self.valid_cellphone_validator1.validate())
+        self.assertFalse(self.invalid_cellphone_validator.validate())
+        self.assertDictEqual(self.invalid_cellphone_validator.get_message(), {
+            'cellphone': {
+                'cellphone': 'not a cellphone of cellphone is not a cellphone'
+            }
+        })
 
     def test_alphabet(self):
-        pass
+        self.assertTrue(self.valid_alphabet_validator.validate())
+        self.assertFalse(self.invalid_alphabet_validator.validate())
+        self.assertDictEqual(self.invalid_alphabet_validator.get_message(), {
+            'string': {
+                'alphabet': '123455 of string is not an alphabet series'
+            }
+        })
