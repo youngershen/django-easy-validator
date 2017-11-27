@@ -7,6 +7,15 @@ from django.test import TestCase
 from validator import Validator
 
 
+class IDSValidator(Validator):
+    id_array = 'ids'
+    message = {
+        'id_array': {
+            'ids': _('{VALUE} of {FIELD} is not an id series')
+        }
+    }
+
+
 class MaxLengthValidator(Validator):
     name = 'max_length:10'
     message = {
@@ -184,6 +193,7 @@ class Test(TestCase):
         self.setup_email()
         self.setup_min_length()
         self.setup_max_length()
+        self.setup_ids()
 
     def tearDown(self):
         pass
@@ -376,6 +386,18 @@ class Test(TestCase):
         self.valid_max_length_validator = MaxLengthValidator(valid_max_length_data)
         self.invalid_max_length_validator = MaxLengthValidator(invalid_max_length_data)
 
+    def setup_ids(self):
+        valid_ids_data = {
+            'id_array': ''
+        }
+
+        invalid_ids_data = {
+            'id_array': 'silence is gold'
+        }
+
+        self.valid_ids_validator = IDSValidator(valid_ids_data)
+        self.invalid_ids_validator = IDSValidator(invalid_ids_data)
+
     def test_required(self):
         self.assertTrue(self.required_valid.validate())
         self.assertFalse(self.required_empty.validate())
@@ -558,7 +580,13 @@ class Test(TestCase):
         self.assertFalse(self.invalid_max_length_validator.validate())
 
     def test_ids(self):
-        pass
+        self.assertTrue(self.valid_ids_validator.validate())
+        self.assertFalse(self.invalid_ids_validator.validate())
+        self.assertDictEqual(self.invalid_ids_validator.get_message(), {
+            'id_array': {
+                'ids': 'silence is gold of id_array is not an id series'
+            }
+        })
 
     def test_cellphone(self):
         pass
