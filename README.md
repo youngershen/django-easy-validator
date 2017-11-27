@@ -1,5 +1,5 @@
 # Django contrib validator
-this software inspired by the validation system of [laravel](https://laravel.com), 
+this software inspired by the validation system of [laravel](https://laravel.com/docs/5.5/validation), 
 you can use this software to validate your data easily and softly.
 
 ## Requirements
