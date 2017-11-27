@@ -4,7 +4,8 @@ you can use this software to validate your data easily and softly.
 
 ## quict start
 
-```
+```python
+
     from validator import Validator
     
     class LoginValidator(Validator):
