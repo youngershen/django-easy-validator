@@ -97,7 +97,8 @@ string case is insensitive.
         birthday = 'required|date:%Y-%m-%d'
 ```
 
-
+the field with date must be a python date format string, the parameter 
+should be a format suit the datetime.datetime.strptime function.
 
 ### date_before
 
