@@ -7,6 +7,15 @@ from django.test import TestCase
 from validator import Validator
 
 
+class SwitchValidator(Validator):
+    choice = 'switch:ok,good,fine'
+    message = {
+        'choice': {
+            'switch': _('{VALUE} of {FIELD} is not in [{SWITCH}]')
+        }
+    }
+
+
 class AlphabetValidator(Validator):
     string = 'alphabet'
     message = {
@@ -214,6 +223,7 @@ class Test(TestCase):
         self.setup_ids()
         self.setup_cellphone()
         self.setup_alphabet()
+        self.setup_switch()
 
     def tearDown(self):
         pass
@@ -452,6 +462,22 @@ class Test(TestCase):
         self.valid_alphabet_validator = AlphabetValidator(valid_alphabet_data)
         self.invalid_alphabet_validator = AlphabetValidator(invalid_alphabet_data)
 
+    def setup_switch(self):
+        valid_switch_data1 = {
+            'choice': 'ok'
+        }
+        valid_switch_data2 = {
+            'choice': 'fine'
+        }
+
+        invalid_switch_data = {
+            'choice': 'bad'
+        }
+
+        self.valid_switch_validator1 = SwitchValidator(valid_switch_data1)
+        self.valid_switch_validator2 = SwitchValidator(valid_switch_data2)
+        self.invalid_switch_validator = SwitchValidator(invalid_switch_data)
+
 ###################################################################################################
 
     def test_required(self):
@@ -465,11 +491,14 @@ class Test(TestCase):
         self.assertFalse(self.accepted_invalid1.validate())
         message = self.accepted_invalid1.get_message()
         self.assertDictEqual(message, {'term': {'required': 'term field is required'},
-                                       'policy': {'accepted': 'hello of policy field must in which of : yes, no'}})
+                                       'policy': {'accepted': 'hello of policy field must in which of :'
+                                                              ' yes, no, true, false, 0, 1'}})
         self.assertFalse(self.accepted_invalid2.validate())
         message = self.accepted_invalid2.get_message()
-        self.assertDictEqual(message, {'term': {'accepted': 'hello of term field must in which of : yes, no'},
-                                       'policy': {'accepted': 'hello of policy field must in which of : yes, no'}})
+        self.assertDictEqual(message, {'term': {'accepted': 'hello of term field must in which of : '
+                                                            'yes, no, true, false, 0, 1'},
+                                       'policy': {'accepted': 'hello of policy field must in which of : '
+                                                              'yes, no, true, false, 0, 1'}})
 
     def test_date(self):
         self.assertTrue(self.date_valid.validate())
@@ -661,5 +690,15 @@ class Test(TestCase):
         self.assertDictEqual(self.invalid_alphabet_validator.get_message(), {
             'string': {
                 'alphabet': '123455 of string is not an alphabet series'
+            }
+        })
+
+    def test_switch(self):
+        self.assertTrue(self.valid_switch_validator1.validate())
+        self.assertTrue(self.valid_switch_validator2.validate())
+        self.assertFalse(self.invalid_switch_validator.validate())
+        self.assertDictEqual(self.invalid_switch_validator.get_message(), {
+            'choice': {
+                'switch': 'bad of choice is not in [ok,good,fine]'
             }
         })
