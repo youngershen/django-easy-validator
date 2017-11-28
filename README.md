@@ -1,6 +1,6 @@
 # Django contrib validator
-this software inspired by the validation system of [laravel](https://laravel.com/docs/5.5/validation), 
-you can use this software to validate your data easily and softly.
+this piece of software is inspired by the validation system of [laravel](https://laravel.com/docs/5.5/validation), 
+you can use this software to validate your POST/GET data easily and softly.
 
 ## Requirements
 
@@ -102,9 +102,29 @@ should be a format suit the datetime.datetime.strptime function.
 
 ### date_before
 
+```python
+    class SubmitValidator(Validator):
+        due = 'required|date_before:2017-12-31'
+```
+
+the field with date_before must be a date format string suit xxxx-mm-dd.
+
 ### date_after
 
+```python
+    class SubmitValidator(Validator):
+        date = 'required|date_after:2017-11-12'
+```
+the field with date_after must be a date format string suit xxxx-mm-dd.
+
 ### date_range
+
+```python
+    class SubmitValidator(Validator):
+        date_range = 'required|date_range:2017-01-01,2017-12-31'
+```
+
+the field with date_range must be 2 date format strings and it should suit xxxx-mm-dd.
 
 ## Advanced Topic
 
