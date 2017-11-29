@@ -62,6 +62,14 @@ install using source code:
 - [date_before](#date_before)
 - [date_after](#date_after)
 - [date_range](#date_range)
+- [datetime](#datetime)
+- [datetime_before](#datetime_before)
+- [datetime_after](#datetime_after)
+- [active_url](#active_url)
+- [numberic](#numberic)
+- [digits](#digits)
+- [regex](#regex)
+- [email](#email)
 
 --------------------------------------------------------------
 
@@ -125,6 +133,81 @@ the field with date_after must be a date format string suit xxxx-mm-dd.
 ```
 
 the field with date_range must be 2 date format strings and it should suit xxxx-mm-dd.
+
+
+### datetime
+
+```python
+    class RegisterValidator(Validator):
+        login_time = 'required|datetime:%Y-%m-%d %H:%M:%S'
+```
+
+the field with datetime and the parameter must be a datetime string suit the datetime.datetime.strptime function.
+
+### datetime_before
+```python
+    class LoginValidator(Validator):
+        time = 'required|datetime_before:2017-12-12 13:14:00'
+```
+
+the field with datetime_before must be a datetime string can strap to a datetime object and so as the parameter.
+
+
+### datetime_after
+
+```python
+    class LoginValidator(Validator):
+        time = 'required|datetime_after:2017-12-12 13:14:00'
+```
+
+the field with datetime_after must be a datetime string can strap to a datetime object and so as the parameter.
+
+### active_url
+
+```python
+    class ActiveURLValidator(Validator):
+        url = 'active_url'
+```
+
+the field with active_url must be a active url you could connect to and get reply.
+
+### numberic
+
+```python
+    class RegisterValidator(Validator):
+        id_number = 'required|numberic'
+```
+
+the field with numberic must be a number, it should be a integer not a float or something.
+
+### digits
+
+```python
+    class RegisterValidator(Validator):
+        product_series = 'required|digits'
+```
+
+the field with digits must only contains digits token.
+
+### regex
+
+```python
+    class RegisterValidator(Validator):
+        id_number = 'required|regex:^0[0-9]{5,10}$'
+```
+
+the field with regex must be a string, the parameter could be any regex pattern string, this
+rule will match the field value with the paramter pattern out.
+
+### email
+
+```python
+    class RegisterValidator(Validator):
+        username = 'required|email'
+        
+```
+
+the field with email must be a valid email address string.
 
 ## Advanced Topic
 

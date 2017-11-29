@@ -136,7 +136,7 @@ class Regex(BaseRule):
 class Email(BaseRule):
     name = 'email'
     message = _('{VALUE} of {FIELD} is not an email address')
-    pattern = r'(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)'
+    pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 
     def check_value(self):
         self.status = True if re.match(self.pattern, self.field_value) else False
