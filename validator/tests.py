@@ -126,6 +126,15 @@ class DatetimeAfterValidator(Validator):
     }
 
 
+class DatetimeRangeValidator(Validator):
+    time_range = 'datetime_range: 1990-12-12 00:00:00, 1991-12-12 00:00:00'
+    message = {
+        'time_range': {
+            'datetime_range': _('time is not in target time range')
+        }
+    }
+
+
 class ActiveURLValidator(Validator):
     url = 'active_url'
     message = {
@@ -236,6 +245,7 @@ class Test(TestCase):
         self.setup_date_range()
         self.setup_datetime_before()
         self.setup_datetime_after()
+        self.setup_datetime_range()
         self.setup_regex()
         self.setup_email()
         self.setup_min_length()
@@ -426,7 +436,17 @@ class Test(TestCase):
         self.invalid_datetime_after = DatetimeAfterValidator(invalid_datetime_after)
 
     def setup_datetime_range(self):
-        pass
+        valid_datetime_range = {
+            'time_range': '1991-05-06 2:11:26'
+        }
+
+        self.valid_datetime_range = DatetimeRangeValidator(valid_datetime_range)
+
+        invalid_datetime_range = {
+            'time_range': '1992-05-06 2:11:26'
+        }
+
+        self.invalid_datetime_range = DatetimeRangeValidator(invalid_datetime_range)
 
     def setup_regex(self):
         valid_regex_data = {'string': 'abc'}
@@ -628,6 +648,15 @@ class Test(TestCase):
         self.assertDictEqual(self.invalid_datetime_after.get_message(), {
             'expired_at': {
                 'datetime_after': 'it has expired yet'
+            }
+        })
+
+    def test_datetime_range(self):
+        self.assertTrue(self.valid_datetime_range.validate())
+        self.assertFalse(self.invalid_datetime_range.validate())
+        self.assertDictEqual(self.invalid_datetime_range.get_message(), {
+            'time_range': {
+                'datetime_range': 'time is not in target time range'
             }
         })
 
