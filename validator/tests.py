@@ -117,6 +117,15 @@ class DatetimeBeforeValidator(Validator):
     }
 
 
+class DatetimeAfterValidator(Validator):
+    expired_at = 'datetime_after: 1990-12-12 08:23:11'
+    message = {
+        'expired_at': {
+            'datetime_after': _('it has expired yet')
+        }
+    }
+
+
 class ActiveURLValidator(Validator):
     url = 'active_url'
     message = {
@@ -226,6 +235,7 @@ class Test(TestCase):
         self.setup_date_after()
         self.setup_date_range()
         self.setup_datetime_before()
+        self.setup_datetime_after()
         self.setup_regex()
         self.setup_email()
         self.setup_min_length()
@@ -403,7 +413,17 @@ class Test(TestCase):
         self.invalid_datetime_before = DatetimeBeforeValidator(invalid_datetime_before)
 
     def setup_datetime_after(self):
-        pass
+        valid_datetime_after = {
+            'expired_at': '1990-12-12 09:23:11'
+        }
+
+        self.valid_datetime_after = DatetimeAfterValidator(valid_datetime_after)
+
+        invalid_datetime_after = {
+            'expired_at': '1990-11-11 08:23:11'
+        }
+
+        self.invalid_datetime_after = DatetimeAfterValidator(invalid_datetime_after)
 
     def setup_datetime_range(self):
         pass
@@ -599,6 +619,15 @@ class Test(TestCase):
         self.assertDictEqual(self.invalid_datetime_before.get_message(), {
             'expired_at': {
                 'datetime_before': 'it has expired yet'
+            }
+        })
+
+    def test_datetime_after(self):
+        self.assertTrue(self.valid_datetime_after.validate())
+        self.assertFalse(self.invalid_datetime_after.validate())
+        self.assertDictEqual(self.invalid_datetime_after.get_message(), {
+            'expired_at': {
+                'datetime_after': 'it has expired yet'
             }
         })
 
