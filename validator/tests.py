@@ -339,7 +339,7 @@ class Test(TestCase):
         self.valid_active_url = ActiveURLValidator(active_url_valid)
 
         active_url_invalid = {
-            'url': 'not_a_domain.com'
+            'url': 'it_is_just_test'
         }
         self.invalid_active_url = ActiveURLValidator(active_url_invalid)
 
@@ -594,7 +594,7 @@ class Test(TestCase):
         message = self.invalid_active_url.get_message()
         self.assertDictEqual(message, {
             'url': {
-                'active_url': 'not_a_domain.com is no a active url'
+                'active_url': 'it_is_just_test is no a active url'
             }
         })
 
