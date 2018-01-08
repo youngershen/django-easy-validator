@@ -478,7 +478,7 @@ class Validator(metaclass=MetaValidator):
 
     @staticmethod
     def _get_rule_info(rule):
-        info = list(map(lambda s: s.strip(), rule.split(':')))
+        info = list(map(lambda s: s.strip(), rule.split(':', 1)))
         name = info[0]
         params = list(map(lambda s: s.strip(), ''.join(info[1:]).split(',')))
         params = params if len(params) > 0 and params[0] is not None else ()
@@ -509,4 +509,3 @@ default_rules = {
     Alphabet.get_name(): Alphabet,
     Switch.get_name(): Switch
 }
-

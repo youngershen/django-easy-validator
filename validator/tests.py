@@ -108,6 +108,15 @@ class DateBeforeValidator(Validator):
     }
 
 
+class DatetimeBeforeValidator(Validator):
+    expired_at = 'datetime_before: 1990-12-12 08:23:11'
+    message = {
+        'expired_at': {
+            'datetime_before': _('it has expired yet')
+        }
+    }
+
+
 class ActiveURLValidator(Validator):
     url = 'active_url'
     message = {
@@ -216,6 +225,7 @@ class Test(TestCase):
         self.setup_date_before()
         self.setup_date_after()
         self.setup_date_range()
+        self.setup_datetime_before()
         self.setup_regex()
         self.setup_email()
         self.setup_min_length()
@@ -339,7 +349,7 @@ class Test(TestCase):
         self.valid_active_url = ActiveURLValidator(active_url_valid)
 
         active_url_invalid = {
-            'url': 'it_is_just_test'
+            'url': 'unknown'
         }
         self.invalid_active_url = ActiveURLValidator(active_url_invalid)
 
@@ -378,6 +388,25 @@ class Test(TestCase):
 
         self.valid_date_range = DateRangeValidator(valid_date_range)
         self.invalid_date_range = DateRangeValidator(invalid_date_range)
+
+    def setup_datetime_before(self):
+        valid_datetime_before = {
+            'expired_at': '1990-11-12 08:23:12'
+        }
+
+        self.valid_datetime_before = DatetimeBeforeValidator(valid_datetime_before)
+
+        invalid_datetime_before = {
+            'expired_at': '1990-12-12 09:23:11'
+        }
+
+        self.invalid_datetime_before = DatetimeBeforeValidator(invalid_datetime_before)
+
+    def setup_datetime_after(self):
+        pass
+
+    def setup_datetime_range(self):
+        pass
 
     def setup_regex(self):
         valid_regex_data = {'string': 'abc'}
@@ -564,6 +593,15 @@ class Test(TestCase):
             }
         })
 
+    def test_datetime_before(self):
+        self.assertTrue(self.valid_datetime_before.validate())
+        self.assertFalse(self.invalid_datetime_before.validate())
+        self.assertDictEqual(self.invalid_datetime_before.get_message(), {
+            'expired_at': {
+                'datetime_before': 'it has expired yet'
+            }
+        })
+
     def test_digits(self):
         self.assertTrue(self.digits_valid_str.validate())
         self.assertTrue(self.digits_valid_int.validate())
@@ -584,17 +622,6 @@ class Test(TestCase):
         self.assertDictEqual(message, {
             'number': {
                 'numberic': _('abc123 is not a number')
-            }
-        })
-
-    def test_active_url(self):
-        self.assertTrue(self.valid_active_url.validate())
-
-        self.assertFalse(self.invalid_active_url.validate())
-        message = self.invalid_active_url.get_message()
-        self.assertDictEqual(message, {
-            'url': {
-                'active_url': 'it_is_just_test is no a active url'
             }
         })
 
