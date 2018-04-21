@@ -8,5 +8,5 @@
 coverage
 build
 dist
-django_contrib_validator.egg-info
+django_easy_validator.egg-info
 __pycache__
