@@ -4,17 +4,17 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 setup(
-    name='django-contrib-validator',
+    name='django-easy-validator',
 
-    version='1.0.7',
+    version='1.0.0',
 
-    description='a django request POST/GET data validator',
+    description='a very easy to use django request POST/GET data validator',
 
-    url='https://github.com/django-fans/django-contrib-validator',
+    url='https://github.com/youngershen/django-easy-validator',
 
     # Author details
     author='Younger Shen',
-    author_email='younger.x.shen@gmail.com',
+    author_email='younger.shen@hotmail.com',
 
     # Choose your license
     license='MIT',

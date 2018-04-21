@@ -1,4 +1,4 @@
-# Django contrib validator
+# Django Easy Validator
 this piece of software is inspired by the validation system of [laravel](https://laravel.com/docs/5.5/validation), 
 you can use this software to validate your POST/GET data easily and softly.
 
@@ -12,7 +12,7 @@ you can use this software to validate your POST/GET data easily and softly.
 
 install using pip :
 
-`pip install django-contrib-validator`
+`pip install django-easy-validator`
 
 install using source code:
 
