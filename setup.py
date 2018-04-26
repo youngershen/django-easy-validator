@@ -6,7 +6,7 @@ here = path.abspath(path.dirname(__file__))
 setup(
     name='django-easy-validator',
 
-    version='1.0.0',
+    version='1.0.1',
 
     description='a very easy to use django request POST/GET data validator',
 

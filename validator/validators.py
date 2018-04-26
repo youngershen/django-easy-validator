@@ -420,6 +420,7 @@ class Validator(metaclass=MetaValidator):
         self.extra_rules = extra_rules
         self.status = True
         self.validate_message = {}
+        self.validate_message_plain = {}
 
     def validate(self):
         validation = self._get_validation()
@@ -435,9 +436,15 @@ class Validator(metaclass=MetaValidator):
     def get_message(self):
         return self.validate_message
 
+    def get_message_plain(self):
+        return self.validate_message_plain
+
     def set_message(self, name, rule, message):
         self.validate_message.update({name: {}}) if name not in self.validate_message.keys() else None
         self.validate_message[name].update({rule: message})
+
+        self.validate_message_plain.update({name: []}) if name not in self.validate_message_plain.keys() else None
+        self.validate_message_plain[name].append(message)
 
     def _validate(self, validation):
         for item in validation:
