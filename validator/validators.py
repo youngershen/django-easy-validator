@@ -3,10 +3,11 @@
 # AUTHOR : Younger Shen
 # EMAIL : younger.x.shen@gmail.com
 import re
+import importlib
 import socket
 import datetime
 from copy import deepcopy
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 
 class RuleNotFoundError(Exception):
@@ -401,6 +402,39 @@ class Accepted(BaseRule):
                                    RULE_NAME=self.name)
 
 
+class Unique(BaseRule):
+    name = 'unique'
+    message = '{VALUE} of {MODEL} with {MODEL_FIELD} is not unique'
+
+    def check_null(self):
+        pass
+
+    def check_value(self):
+        self.status = self.check_model()
+
+    def check_model(self):
+        model_name, model_field = self.args
+        model = self.get_model(model_name)
+        qs = model.objects.filter(**{model_field: self.field_value})
+        return qs.exists()
+
+    @staticmethod
+    def get_model(name):
+        from django.conf import settings
+        from django.apps import apps
+
+        if 'AUTH_USER_MODEL' == name:
+            app, name = settings.AUTH_USER_MODEL.split('.')
+        else:
+            app, name = name.split('.')
+        return apps.get_model(app, name)
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value, FIELD=self.field_name,
+                                   MODEL=self.args[0],
+                                   MODEL_FIELD=self.args[1])
+
+
 class MetaValidator(type):
     def __new__(mcs, *args, **kwargs):
         name, base, attrs = args
@@ -519,5 +553,6 @@ default_rules = {
     IDS.get_name(): IDS,
     Cellphone.get_name(): Cellphone,
     Alphabet.get_name(): Alphabet,
-    Switch.get_name(): Switch
+    Switch.get_name(): Switch,
+    Unique.get_name(): Unique
 }

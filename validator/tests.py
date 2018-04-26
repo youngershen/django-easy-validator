@@ -4,7 +4,11 @@
 # EMAIL : younger.x.shen@gmail.com
 from django.utils.translation import ugettext as _
 from django.test import TestCase
-from validator import Validator
+from .validators import Validator
+
+
+class UniqueValidator(Validator):
+    username = 'required|unique:AUTH_USER_MODEL,username'
 
 
 class SwitchValidator(Validator):
@@ -254,9 +258,22 @@ class Test(TestCase):
         self.setup_cellphone()
         self.setup_alphabet()
         self.setup_switch()
+        self.setup_unique()
 
     def tearDown(self):
         pass
+
+    def setup_unique(self):
+        data_valid = {
+            'username': 'user1'
+        }
+
+        data_invalid = {
+            'username': ''
+        }
+
+        self.unique_valid = UniqueValidator(data_valid)
+        self.unique_invalid = UniqueValidator(data_invalid)
 
     def setup_required(self):
         data_valid = {
@@ -394,7 +411,7 @@ class Test(TestCase):
         invalid_date_after = {
             'birthday': '1989-12-12'
         }
-        self.valid_date_after = DateAfterValidator(valid_date_after);
+        self.valid_date_after = DateAfterValidator(valid_date_after)
         self.invalid_date_after = DateAfterValidator(invalid_date_after)
 
     def setup_date_range(self):
@@ -787,3 +804,8 @@ class Test(TestCase):
                 'switch': 'bad of choice is not in [ok,good,fine]'
             }
         })
+
+    def test_unique(self):
+        self.assertTrue(not self.unique_valid.validate())
+        message = self.unique_valid.get_message()
+        print(message)
