@@ -416,7 +416,7 @@ class Unique(BaseRule):
         model_name, model_field = self.args
         model = self.get_model(model_name)
         qs = model.objects.filter(**{model_field: self.field_value})
-        return qs.exists()
+        return not qs.exists()
 
     @staticmethod
     def get_model(name):

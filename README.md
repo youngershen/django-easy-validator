@@ -2,6 +2,15 @@
 this piece of software is inspired by the validation system of [laravel](https://laravel.com/docs/5.5/validation), 
 you can use this software to validate your POST/GET data easily and softly.
 
+---
+
+![PyPI](https://img.shields.io/pypi/v/django-easy-validator.svg)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/django-easy-validator.svg)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-easy-validator.svg)
+![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-easy-validator.svg)
+
+---
+
 ## Requirements
 
 - Python 3.4

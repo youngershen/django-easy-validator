@@ -6,7 +6,7 @@ here = path.abspath(path.dirname(__file__))
 setup(
     name='django-easy-validator',
 
-    version='1.0.2',
+    version='1.0.3',
 
     description='a very easy to use django request POST/GET data validator',
 
@@ -44,4 +44,8 @@ setup(
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=find_packages(),
+
+    install_requires=[
+        'Django >= 1.6',
+    ],
 )
