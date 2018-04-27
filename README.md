@@ -4,10 +4,13 @@ you can use this software to validate your POST/GET data easily and softly.
 
 ---
 
+![Travis](https://img.shields.io/travis/youngershen/django-easy-validator.svg)
+![PyPI - License](https://img.shields.io/pypi/l/django-easy-validator.svg)
 ![PyPI](https://img.shields.io/pypi/v/django-easy-validator.svg)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/django-easy-validator.svg)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-easy-validator.svg)
 ![PyPI - Django Version](https://img.shields.io/pypi/djversions/django-easy-validator.svg)
+![GitHub last commit](https://img.shields.io/github/last-commit/youngershen/django-easy-validator.svg)
 
 ---
 
