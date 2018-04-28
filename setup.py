@@ -45,7 +45,14 @@ setup(
     # simple. Or you can use find_packages().
     packages=find_packages(),
 
-    install_requires=[
-        'Django >= 1.6',
+    tests_require=[
+        'django-coverage'
     ],
+
+    install_requires=[
+        'Django',
+    ],
+
+    python_requires='>=3.6',
+
 )

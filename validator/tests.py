@@ -808,4 +808,3 @@ class Test(TestCase):
     def test_unique(self):
         self.assertTrue(not self.unique_valid.validate())
         message = self.unique_valid.get_message()
-        print(message)
