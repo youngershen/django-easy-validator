@@ -14,7 +14,10 @@ install:
   - pip install pytest-django
   - pip install django
   - pip install pytest-cov
-  - pip install pymysql
+  - pip install codecov
 
 script:
   - pytest --cov-report=html --cov-config=.coveragerc  --cov=./
+
+after_success:
+  - codecov
