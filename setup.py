@@ -45,10 +45,6 @@ setup(
     # simple. Or you can use find_packages().
     packages=find_packages(),
 
-    tests_require=[
-        'django-coverage'
-    ],
-
     install_requires=[
         'Django',
     ],

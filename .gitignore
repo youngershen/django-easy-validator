@@ -8,5 +8,8 @@
 coverage
 build
 dist
+htmlcov
 django_easy_validator.egg-info
 __pycache__
+.pytest_cache
+html

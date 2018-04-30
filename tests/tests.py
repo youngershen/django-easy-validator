@@ -3,7 +3,7 @@
 # AUTHOR : Younger Shen
 # EMAIL : younger.x.shen@gmail.com
 from django.test import TestCase
-from .validators import Validator
+from validator import Validator
 
 
 class Required(Validator):
@@ -91,3 +91,12 @@ class AcceptedTestCase(TestCase):
         self.assertFalse(validator.validate())
         message = validator.get_message()
         self.assertDictEqual(message, self.message)
+
+
+if __name__ == '__main__':
+    from django.conf import settings
+    from django.core.management import execute_from_command_line
+
+    settings.configure(INSTALLED_APPS=['validator'])
+    execute_from_command_line(argv=('', 'test', 'validator'))
+

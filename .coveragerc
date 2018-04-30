@@ -1,0 +1,8 @@
+[run]
+include = validator/validators.py
+
+[report]
+include = validator/validators.py
+
+[html]
+directory = html
