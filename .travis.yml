@@ -1,6 +1,12 @@
 language: python
+
 python:
   - "3.6.5"
+
+test:
+  adapter: sqlite3
+  database: "validators"
+  timeout: 500
 
 install:
   - pip install -e .
