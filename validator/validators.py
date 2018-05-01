@@ -3,7 +3,6 @@
 # AUTHOR : Younger Shen
 # EMAIL : younger.x.shen@gmail.com
 import re
-import importlib
 import socket
 import datetime
 from copy import deepcopy
@@ -389,16 +388,20 @@ class Accepted(BaseRule):
     message = '{VALUE} of {FIELD} field must in which of : {FLAGS}'
     flag = ['yes', 'no', 'true', 'false', '0', '1']
 
-    def get_flags(self):
+    def get_flag_str(self):
         return ', '.join(self.flag)
 
     def check_value(self):
-        self.status = False if self.field_value.lower() not in self.flag else True
+        self.status = self.check_flag()
+
+    def check_flag(self):
+        flag = self.field_value.lower()
+        return flag in self.flag or flag in list(self.args)
 
     def get_message(self):
         return self.message.format(FIELD=self.field_name,
                                    VALUE=self.field_value,
-                                   FLAGS=self.get_flags(),
+                                   FLAGS=self.get_flag_str(),
                                    RULE_NAME=self.name)
 
 

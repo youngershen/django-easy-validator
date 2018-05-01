@@ -27,12 +27,10 @@ class Accepted(Validator):
 
 
 class AcceptedCustom(Validator):
-    remember = 'accepted'
-    flag = ['shi', 'fou']
-
+    remember = 'accepted:shi,fou'
     message = {
         'remember': {
-            'accepted': ''
+            'accepted': 'you just input {VALUE}'
         }
     }
 
@@ -93,10 +91,28 @@ class AcceptedTestCase(TestCase):
         self.assertDictEqual(message, self.message)
 
 
-if __name__ == '__main__':
-    from django.conf import settings
-    from django.core.management import execute_from_command_line
+class AcceptedCustomTestCase(TestCase):
+    def setUp(self):
+        self.validator = AcceptedCustom
+        self.valid_data = {
+            'remember': 'shi'
+        }
 
-    settings.configure(INSTALLED_APPS=['validator'])
-    execute_from_command_line(argv=('', 'test', 'validator'))
+        self.invalid_data = {
+            'remember': 'bushi'
+        }
 
+        self.message = {
+            'remember': {
+                'accepted': 'you just input bushi'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        self.assertDictEqual(validator.get_message(), self.message)
