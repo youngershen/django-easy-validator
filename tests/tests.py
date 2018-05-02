@@ -35,6 +35,24 @@ class AcceptedCustom(Validator):
     }
 
 
+class Date(Validator):
+    birthday = 'date'
+    message = {
+        'birthday': {
+            'date': 'date format is invalid'
+        }
+    }
+
+
+class DateCustom(Validator):
+    birthday = 'date:%Y'
+    message = {
+        'birthday': {
+            'date': 'date format is not ok'
+        }
+    }
+
+
 class RequiredTestCase(TestCase):
     def setUp(self):
         self.validator = Required
@@ -105,6 +123,58 @@ class AcceptedCustomTestCase(TestCase):
         self.message = {
             'remember': {
                 'accepted': 'you just input bushi'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        self.assertDictEqual(validator.get_message(), self.message)
+
+
+class DateTestCase(TestCase):
+    def setUp(self):
+        self.validator = Date
+        self.valid_data = {
+            'birthday': '1990-12-12'
+        }
+        self.invalid_data = {
+            'birthday': 'not a date'
+        }
+
+        self.message = {
+            'birthday': {
+                'date': 'date format is invalid'
+            }
+        }
+
+    def test_vald(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        self.assertDictEqual(validator.get_message(), self.message)
+
+
+class DateCustomTestCase(TestCase):
+    def setUp(self):
+        self.validator = DateCustom
+        self.valid_data = {
+            'birthday': '1990'
+        }
+        self.invalid_data = {
+            'birthday': 'not a date'
+        }
+
+        self.message = {
+            'birthday': {
+                'date': 'date format is not ok'
             }
         }
 
