@@ -53,6 +53,19 @@ class DateCustom(Validator):
     }
 
 
+class DateBefore(Validator):
+    expired_at = 'date_before:1990-12-12'
+    message = {
+        'expired_at': {
+            'date_before': 'date is not before 1990-12-12'
+        }
+    }
+
+
+class DateBeforeCustom(Validator):
+    pass
+
+
 class RequiredTestCase(TestCase):
     def setUp(self):
         self.validator = Required
@@ -186,3 +199,35 @@ class DateCustomTestCase(TestCase):
         validator = self.validator(self.invalid_data)
         self.assertFalse(validator.validate())
         self.assertDictEqual(validator.get_message(), self.message)
+
+
+class DateBeforeTestCase(TestCase):
+    def setUp(self):
+        self.validator = DateBefore
+        self.valid_data = {
+            'expired_at': '1982-11-30'
+        }
+
+        self.invalid_data = {
+            'expired_at': '1991-04-25'
+        }
+
+        self.message = {
+            'expired_at': {
+                'date_before': 'date is not before 1990-12-12'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        self.assertDictEqual(self.message, validator.get_message())
+
+
+class DateBeforeCustomTestCase(TestCase):
+    def setUp(self):
+        pass
