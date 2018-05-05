@@ -19,6 +19,10 @@ class RuleNotFoundError(Exception):
         return self.message.format(NAME=self.name)
 
 
+class RuleMissedParameterError(Exception):
+    pass
+
+
 class BaseRule:
     name = 'base_rule'
     message = _('{VALUE} of {FIELD} field is match rule {RULE_NAME}.')
@@ -44,6 +48,12 @@ class BaseRule:
 
     def get_message(self):
         return self.message.format(FIELD=self.field_name, VALUE=self.field_value, RULE_NAME=self.name)
+
+    def get_arg(self, index):
+        if len(self.args) > index:
+            return self.args[index]
+        else:
+            return None
 
     @classmethod
     def get_name(cls):
@@ -233,12 +243,18 @@ class DateBefore(BaseRule):
         self.status = field_date < param_date
 
     def _get_param_date(self):
-        date_str = self.args[0] if len(self.args) == 1 else None
-        date = datetime.datetime.strptime(date_str, self.param_format_str)
+        date_str = self.get_arg(0)
+
+        if not date_str:
+            raise RuleMissedParameterError(_('DateBefore Rule missed a paramter'))
+
+        param_format_str = self.get_arg(1) if self.get_arg(1) else self.param_format_str
+        date = datetime.datetime.strptime(date_str, param_format_str)
         return date
 
     def _get_field_date(self):
-        date = datetime.datetime.strptime(self.field_value, self.field_format_str)
+        field_format_str = self.get_arg(2) if self.get_arg(2) else self.field_format_str
+        date = datetime.datetime.strptime(self.field_value, field_format_str)
         return date
 
     def get_message(self):
