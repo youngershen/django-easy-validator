@@ -71,6 +71,26 @@ class DateBeforeCustom(Validator):
     }
 
 
+class DateAfter(Validator):
+    due_at = 'date_after:1990-12-12'
+    message = {
+        'due_at': {
+            'date_after': 'date is not after 1990-12-12'
+        }
+    }
+
+
+class DateAfterCustom(Validator):
+    due_at = 'date_after:1990,%Y,%Y'
+    message = {
+        'due_at': {
+            'date_after': 'date is not after 1990'
+        }
+    }
+
+# =====================================================================
+
+
 class RequiredTestCase(TestCase):
     def setUp(self):
         self.validator = Required
@@ -256,3 +276,53 @@ class DateBeforeCustomTestCase(TestCase):
         validator = self.validator(self.invalid_data)
         self.assertFalse(validator.validate())
         self.assertDictEqual(self.message, validator.get_message())
+
+
+class DateAfterTestCase(TestCase):
+    def setUp(self):
+        self.validator = DateAfter
+        self.valid_data = {
+            'due_at': '1991-04-25'
+        }
+        self.invalid_data = {
+            'due_at': '1982-11-30'
+        }
+        self.message = {
+            'due_at': {
+                'date_after': 'date is not after 1990-12-12'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        self.assertDictEqual(validator.get_message(), self.message)
+
+
+class DateAfterCustomTestCase(TestCase):
+    def setUp(self):
+        self.validator = DateAfterCustom
+        self.valid_data = {
+            'due_at': '1991'
+        }
+        self.invalid_data = {
+            'due_at': '1989'
+        }
+        self.message = {
+            'due_at': {
+                'date_after': 'date is not after 1990'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        self.assertDictEqual(validator.get_message(), self.message)

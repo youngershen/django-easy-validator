@@ -276,11 +276,17 @@ class DateAfter(BaseRule):
 
     def _get_param_date(self):
         date_str = self.args[0]
-        date = datetime.datetime.strptime(date_str, self.param_format_str)
+
+        if not date_str:
+            raise RuleMissedParameterError('date_after missed a parameter')
+
+        param_format_str = self.get_arg(1) if self.get_arg(1) else self.param_format_str
+        date = datetime.datetime.strptime(date_str, param_format_str)
         return date
 
     def _get_field_date(self):
-        date = datetime.datetime.strptime(self.field_value, self.field_format_str)
+        field_format_str = self.get_arg(2) if self.get_arg(2) else self.field_format_str
+        date = datetime.datetime.strptime(self.field_value, field_format_str)
         return date
 
     def get_message(self):
