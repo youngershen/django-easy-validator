@@ -3,6 +3,6 @@
 # AUTHOR : Younger Shen
 # EMAIL : younger.x.shen@gmail.com
 
-from .validators import Validator
+from .validators import Validator, BaseRule
 
-__all__ = ['Validator']
+__all__ = ['Validator', 'BaseRule']
