@@ -88,6 +88,15 @@ class DateAfterCustom(Validator):
         }
     }
 
+
+class DateRange(Validator):
+    period = 'date_range:1990-12-12, 1991-12-12'
+    message = {
+        'period': {
+            'date_range': 'date is not in range of {BEGIN} to {END}'
+        }
+    }
+
 # =====================================================================
 
 
@@ -326,3 +335,31 @@ class DateAfterCustomTestCase(TestCase):
         validator = self.validator(self.invalid_data)
         self.assertFalse(validator.validate())
         self.assertDictEqual(validator.get_message(), self.message)
+
+
+class DateRangeTestCase(TestCase):
+    def setUp(self):
+        self.validator = DateRange
+        self.valid_data = {
+            'period': '1991-01-01'
+        }
+
+        self.invalid_data = {
+            'period': '1992-12-12'
+        }
+
+        self.message = {
+            'period': {
+                'date_range': 'date is not in range of 1990-12-12 to 1991-12-12'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(self.message, message)
