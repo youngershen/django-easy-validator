@@ -97,6 +97,15 @@ class DateRange(Validator):
         }
     }
 
+
+class Datetime(Validator):
+    now = 'datetime'
+    message = {
+        'now': {
+            'datetime': 'it is not a datetime format string'
+        }
+    }
+
 # =====================================================================
 
 
@@ -363,3 +372,30 @@ class DateRangeTestCase(TestCase):
         self.assertFalse(validator.validate())
         message = validator.get_message()
         self.assertDictEqual(self.message, message)
+
+
+class DatetimeTestCase(TestCase):
+    def setUp(self):
+        self.validator = Datetime
+        self.valid_data = {
+            'now': '1987-10-5 12:55:01'
+        }
+        self.invalid_data = {
+            'now': 'not a datetime string'
+        }
+
+        self.message = {
+            'now': {
+                'datetime': 'it is not a datetime format string'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
