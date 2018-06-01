@@ -106,6 +106,16 @@ class Datetime(Validator):
         }
     }
 
+
+class DatetimeBefore(Validator):
+    due_at = 'datetime_before:1990-12-12 15:31:10'
+    message = {
+        'due_at': {
+            'datetime_before': 'the input is not before {DATETIME}'
+        }
+    }
+
+
 # =====================================================================
 
 
@@ -387,6 +397,33 @@ class DatetimeTestCase(TestCase):
         self.message = {
             'now': {
                 'datetime': 'it is not a datetime format string'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class DatetimeBeforeTestCase(TestCase):
+    def setUp(self):
+        self.validator = DatetimeBefore
+        self.valid_data = {
+            'due_at': '1989-11-11 12:12:00'
+        }
+        self.invalid_data = {
+            'due_at': '2018-06-01 12:55:01'
+        }
+
+        self.message = {
+            'due_at': {
+                'datetime_before': 'the input is not before 1990-12-12 15:31:10'
             }
         }
 
