@@ -116,6 +116,23 @@ class DatetimeBefore(Validator):
     }
 
 
+class DatetimeAfter(Validator):
+    after_at = 'datetime_after:1990-12-12 15:31:10'
+    message = {
+        'after_at': {
+            'datetime_after': 'the input is not after {DATETIME}'
+        }
+    }
+
+
+class DatetimeRange(Validator):
+    range_at = 'datetime_range:1990-12-12 15:31:10,1991-12-12 15:31:10'
+    message = {
+        'range_at': {
+            'datetime_range': 'the input is not after {BEGIN} to {END}'
+        }
+    }
+
 # =====================================================================
 
 
@@ -424,6 +441,59 @@ class DatetimeBeforeTestCase(TestCase):
         self.message = {
             'due_at': {
                 'datetime_before': 'the input is not before 1990-12-12 15:31:10'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class DatetimeAfterTestCase(TestCase):
+    def setUp(self):
+        self.validator = DatetimeAfter
+        self.valid_data = {
+            'after_at': '2011-11-11 12:12:00'
+        }
+        self.invalid_data = {
+            'after_at': '1955-11-11 12:12:00'
+        }
+        self.message = {
+            'after_at': {
+                'datetime_after': 'the input is not after 1990-12-12 15:31:10'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class DatetimeRangeTestCase(TestCase):
+    def setUp(self):
+        self.validator = DatetimeRange
+        self.valid_data = {
+            'range_at': '1991-01-12 15:31:10'
+        }
+        self.invalid_data = {
+            'range_at': '1988-01-12 15:31:10'
+        }
+
+        self.message = {
+            'range_at': {
+                'datetime_range': 'the input is not after 1990-12-12 15:31:10 to 1991-12-12 15:31:10'
             }
         }
 
