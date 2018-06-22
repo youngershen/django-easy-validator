@@ -166,12 +166,9 @@ class Numberic(BaseRule):
     message = _('{VALUE} of {FIELD} is not match numberic')
 
     def check_value(self):
-        try:
-            int(str(self.field_value))
-        except ValueError:
-            self.status = False
-        else:
-            self.status = True
+        int(str(self.field_value))
+        regex = r'^[1-9]{1}[0-9]*'
+        self.status = True if re.match(regex, str(self.field_value)) else False
 
 
 class ActiveURL(BaseRule):
