@@ -133,6 +133,24 @@ class DatetimeRange(Validator):
         }
     }
 
+
+class ActiveUrl(Validator):
+    url = 'active_url'
+    message = {
+        'url': {
+            'active_url': 'it is not a active url'
+        }
+    }
+
+
+class Numberic(Validator):
+    number = 'numberic'
+    message = {
+        'number': {
+            'numberic': '{VALUE} of number is not numberic'
+        }
+    }
+
 # =====================================================================
 
 
@@ -502,6 +520,53 @@ class DatetimeRangeTestCase(TestCase):
         self.assertTrue(validator.validate())
 
     def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class ActiveUrlTestCase(TestCase):
+    def setUp(self):
+        self.validator = ActiveUrl
+        self.valid_data = {
+            'url': 'baidu.com'
+        }
+        self.invalid_data = {
+            'url': 'www.sfsdf.sdffs'
+        }
+        self.message = {
+            'url': {
+                'active_url': 'it is not a active url'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+
+class NumberciTestCase(TestCase):
+    def setUp(self):
+        self.validator = Numberic
+        self.valid_data = {
+            'number': '123'
+        }
+        self.invalid_data = {
+            'number': 'abcdef'
+        }
+
+        self.message = {
+            'number': {
+                'numberic': 'abcdef of number is not numberic'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def tst_invalid(self):
         validator = self.validator(self.invalid_data)
         self.assertFalse(validator.validate())
         message = validator.get_message()
