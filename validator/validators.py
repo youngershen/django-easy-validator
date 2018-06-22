@@ -177,7 +177,7 @@ class ActiveURL(BaseRule):
 
     def check_value(self):
         try:
-            ip = socket.gethostbyname(self.field_value)
+            socket.gethostbyname(self.field_value)
         except socket.gaierror:
             self.status = False
 

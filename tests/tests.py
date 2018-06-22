@@ -151,6 +151,14 @@ class Numberic(Validator):
         }
     }
 
+
+class Digits(Validator):
+    card = 'digits'
+    message = {
+        'card': {
+            'digits': '{VALUE} of card is not digits'
+        }
+    }
 # =====================================================================
 
 
@@ -571,3 +579,31 @@ class NumberciTestCase(TestCase):
         self.assertFalse(validator.validate())
         message = validator.get_message()
         self.assertDictEqual(message, self.message)
+
+
+class DigitsTestCase(TestCase):
+    def setUp(self):
+        self.validator = Digits
+        self.valid_data = {
+            'card': '12345'
+        }
+        self.invalid_data = {
+            'card': 'abcdef'
+        }
+        self.message = {
+            'card': {
+                'digits': 'abcdef of card is not digits'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
