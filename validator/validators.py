@@ -1,7 +1,11 @@
-# PROJECT : django-contrib-validator
-# TIME : 17-9-11 下午3:00
-# AUTHOR : Younger Shen
-# EMAIL : younger.x.shen@gmail.com
+# PROJECT : hhcms
+# TIME    : 18-1-2 上午9:44
+# AUTHOR  : 申延刚 <Younger Shen>
+# EMAIL   : younger.shen@hotmail.com
+# PHONE   : 13811754531
+# WECHAT  : 13811754531
+# WEBSITE : www.punkcoder.cn
+
 import re
 import socket
 import datetime
