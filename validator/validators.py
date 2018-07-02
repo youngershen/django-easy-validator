@@ -83,7 +83,7 @@ class Switch(BaseRule):
 
 class Alphabet(BaseRule):
     name = 'alphabet'
-    regex = r'[a-z]+'
+    regex = r'[a-zA-Z]+'
     message = _('{VALUE} of {FIELD} is not alphabet')
 
     def check_value(self):

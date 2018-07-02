@@ -174,6 +174,78 @@ class Regex(Validator):
         }
     }
 
+
+class Email(Validator):
+    email = 'email'
+    message = {
+        'email': {
+            'email': '{VALUE} is not an email address'
+        }
+    }
+
+
+class MinLength(Validator):
+    username = 'min_length:4'
+    message = {
+        'username': {
+            'min_length': '{VALUE} of username is shotter than 4'
+        }
+    }
+
+
+class MaxLength(Validator):
+    username = 'max_length:7'
+    message = {
+        'username': {
+            'max_length': '{VALUE} of username is longger than 7'
+        }
+    }
+
+
+class IDS(Validator):
+    ids = 'ids'
+    message = {
+        'ids': {
+            'ids': '{VALUE} of ids is not a id series'
+        }
+    }
+
+
+class Cellphone(Validator):
+    cellphone = 'cellphone'
+    message = {
+        'cellphone': {
+            'cellphone': '{VALUE} is not a cellphone number'
+        }
+    }
+
+
+class Alphabet(Validator):
+    alphabet = 'alphabet'
+    message = {
+        'alphabet': {
+            'alphabet': '{VALUE} of alphabet is not alphabet'
+        }
+    }
+
+
+class Switch(Validator):
+    accepted = 'switch:ok,good,awesome'
+    message = {
+        'accepted': {
+            'switch': '{VALUE} of accepted is not in [{SWITCH}]'
+        }
+    }
+
+
+class Unique(Validator):
+    user_id = 'unique:AUTH_USER_MODEL,id'
+    message = {
+        'user_id': {
+            'unique': '{VALUE} of {MODEL} with id is not unique'
+        }
+    }
+
 # =====================================================================
 
 
@@ -634,6 +706,222 @@ class RegexTestCase(TestCase):
         self.message = {
             'identity': {
                 'regex': '1 of identity is not match the pattern [0-9a-z]{3,5}'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class EmailTestCase(TestCase):
+    def setUp(self):
+        self.validator = Email
+        self.valid_data = {
+            'email': 'younger.shen@hotmail.com'
+        }
+        self.invalid_data = {
+            'email': 'i am a little bear'
+        }
+        self.message = {
+            'email': {
+                'email': 'i am a little bear is not an email address'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class MinLengthTestCase(TestCase):
+    def setUp(self):
+        self.validator = MinLength
+        self.valid_data = {
+            'username': 'abacdef'
+        }
+        self.invalid_data = {
+            'username': 'a'
+        }
+        self.message = {
+            'username': {
+                'min_length': 'a of username is shotter than 4'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class MaxLengthTestCase(TestCase):
+    def setUp(self):
+        self.validator = MaxLength
+        self.valid_data = {
+            'username': 'abacde'
+        }
+        self.invalid_data = {
+            'username': 'abcdefgh'
+        }
+        self.message = {
+            'username': {
+                'max_length': 'abcdefgh of username is longger than 7'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class IDSTestCase(TestCase):
+    def setUp(self):
+        self.validator = IDS
+        self.valid_data = {
+            'ids': '1,2,3,4'
+        }
+        self.invalid_data = {
+            'ids': 'a,b,c,d'
+        }
+        self.message = {
+            'ids': {
+                'ids': 'a,b,c,d of ids is not a id series'
+            }
+        }
+
+    def test_valid(self):
+        validator = IDS(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = IDS(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class CellphoneTestCase(TestCase):
+    def setUp(self):
+        self.validator = Cellphone
+        self.valid_data = {
+            'cellphone': '13811754531'
+        }
+
+        self.invalid_data = {
+            '123456789123456789'
+        }
+
+        self.message = {
+            'cellphone': {
+                'cellphone': '123456789123456789 is not a cellphone number'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def tst_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class AlphabetTestCase(TestCase):
+    def setUp(self):
+        self.validator = Alphabet
+        self.valid_data = {
+            'alphabet': 'abcdef'
+        }
+        self.invalid_data = {
+            'alphabet': '123456'
+        }
+
+        self.message = {
+            'alphabet': {
+                'alphabet': '123456 of alphabet is not alphabet'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class SwitchTestCase(TestCase):
+    def setUp(self):
+        self.validator = Switch
+        self.valid_data = {
+            'accepted': 'ok'
+        }
+
+        self.invalid_data = {
+            'accepted': 'bad'
+        }
+        self.message = {
+            'accepted': {
+                'switch': 'bad of accepted is not in [ok,good,awesome]'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class UniqueTestCase(TestCase):
+    def setUp(self):
+        from django.contrib.auth.models import User
+        User.objects.create_user('test', 'test')
+
+        self.validator = Unique
+        self.valid_data = {
+            'user_id': '2'
+        }
+        self.invalid_data = {
+            'user_id': '1'
+        }
+
+        self.message = {
+            'user_id': {
+                'unique': '1 of AUTH_USER_MODEL with id is not unique'
             }
         }
 
