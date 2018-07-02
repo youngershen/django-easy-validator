@@ -1,4 +1,4 @@
-# PROJECT : hhcms
+# PROJECT : django-easy-validator
 # TIME    : 18-1-2 上午9:44
 # AUTHOR  : 申延刚 <Younger Shen>
 # EMAIL   : younger.shen@hotmail.com
@@ -473,6 +473,7 @@ class MetaValidator(type):
 
 
 class Validator(metaclass=MetaValidator):
+    parse_args = True
 
     def __init__(self, data, request=None, extra_rules=None):
         self.data = deepcopy(data)
@@ -548,12 +549,16 @@ class Validator(metaclass=MetaValidator):
         rules = map(self._get_rule_info, validation.split('|'))
         return rules
 
-    @staticmethod
-    def _get_rule_info(rule):
+    def _get_rule_info(self, rule):
         info = list(map(lambda s: s.strip(), rule.split(':', 1)))
         name = info[0]
-        params = list(map(lambda s: s.strip(), ''.join(info[1:]).split(',')))
+        if self.parse_args:
+            params = list(map(lambda s: s.strip(), ''.join(info[1:]).split(',')))
+        else:
+            params = list(map(lambda s: s.strip(), info[1:]))
+
         params = params if len(params) > 0 and params[0] is not None else ()
+
         rules = {'name': name, 'params': params}
         return rules
 

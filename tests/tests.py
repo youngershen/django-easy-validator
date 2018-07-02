@@ -1,7 +1,11 @@
-# PROJECT : validator
-# TIME : 17-9-16 上午10:14
-# AUTHOR : Younger Shen
-# EMAIL : younger.x.shen@gmail.com
+# PROJECT : django-easy-validator
+# TIME    : 18-1-2 上午9:44
+# AUTHOR  : 申延刚 <Younger Shen>
+# EMAIL   : younger.shen@hotmail.com
+# PHONE   : 13811754531
+# WECHAT  : 13811754531
+# WEBSITE : www.punkcoder.cn
+
 from django.test import TestCase
 from validator import Validator
 
@@ -159,6 +163,17 @@ class Digits(Validator):
             'digits': '{VALUE} of card is not digits'
         }
     }
+
+
+class Regex(Validator):
+    parse_args = False
+    identity = 'regex:[0-9a-z]{3,5}'
+    message = {
+        'identity': {
+            'regex': '{VALUE} of identity is not match the pattern {REGEX}'
+        }
+    }
+
 # =====================================================================
 
 
@@ -607,3 +622,27 @@ class DigitsTestCase(TestCase):
         self.assertDictEqual(message, self.message)
 
 
+class RegexTestCase(TestCase):
+    def setUp(self):
+        self.validator = Regex
+        self.valid_data = {
+            'identity': 'ab12'
+        }
+        self.invalid_data = {
+            'identity': '1'
+        }
+        self.message = {
+            'identity': {
+                'regex': '1 of identity is not match the pattern [0-9a-z]{3,5}'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
