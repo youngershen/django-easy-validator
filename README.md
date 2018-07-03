@@ -19,11 +19,11 @@ you can use this software to validate your POST/GET data easily and softly.
 
 ## Installation
 
-install using pip :
+install from pypi :
 
 `pip install django-easy-validator`
 
-install using source code:
+install from source code:
 
 `python setup.py install`
 
@@ -50,7 +50,7 @@ install using source code:
         
 ```
 
-2. spawn your validation class then call validate method to get it out.
+2. spawn your validation class then call validate method to check it out.
 
 ```python
        

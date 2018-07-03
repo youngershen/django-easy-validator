@@ -42,10 +42,10 @@ class BaseRule:
         self.check_value() if self.field_value else self.check_null()
 
     def check_value(self):
-        pass
+        raise NotImplementedError()
 
     def check_null(self):
-        pass
+        raise NotImplementedError()
 
     def get_status(self):
         return self.status
@@ -71,6 +71,9 @@ class Switch(BaseRule):
     def check_value(self):
         self.status = self.field_value in self._get_params()
 
+    def check_null(self):
+        pass
+
     def get_message(self):
         switch_str = ','.join(self._get_params())
         return self.message.format(VALUE=self.field_value,
@@ -86,6 +89,9 @@ class Alphabet(BaseRule):
     regex = r'[a-zA-Z]+'
     message = _('{VALUE} of {FIELD} is not alphabet')
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         self.status = True if re.match(self.regex, self.field_value) else False
 
@@ -93,6 +99,9 @@ class Alphabet(BaseRule):
 class MinLength(BaseRule):
     name = 'min_length'
     message = _('{VALUE} of {FIELD} is shotter than {MIN}')
+
+    def check_null(self):
+        pass
 
     def check_value(self):
         self.status = len(self.field_value) >= int(self.args[0])
@@ -104,6 +113,9 @@ class MinLength(BaseRule):
 class MaxLength(BaseRule):
     name = 'max_length'
     message = _('{VALUE} of {FIELD} is longger than {MAX}')
+
+    def check_null(self):
+        pass
 
     def check_value(self):
         self.status = len(self.field_value) <= int(self.args[0])
@@ -117,6 +129,9 @@ class IDS(BaseRule):
     message = _('{VALUE} of {FIELD} is not a id series')
     regex = r'^([0-9]+,)+[0-9]+$'
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         self.status = True if re.match(self.regex, self.field_value) else False
 
@@ -126,6 +141,9 @@ class Cellphone(BaseRule):
     regex = r'^([\+]?[0-9]{2})?1[0-9]{10}$'
     message = _('{VALUE} of {FIELD} is not a cellphone number')
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         self.status = True if re.match(self.regex, self.field_value) else False
 
@@ -133,6 +151,9 @@ class Cellphone(BaseRule):
 class Regex(BaseRule):
     name = 'regex'
     message = _('{VALUE} of {FIELD} is not mathc the pattern {REGEX}')
+
+    def check_null(self):
+        pass
 
     def check_value(self):
         self.status = True if self._match() else False
@@ -152,6 +173,9 @@ class Email(BaseRule):
     message = _('{VALUE} of {FIELD} is not an email address')
     pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         self.status = True if re.match(self.pattern, self.field_value) else False
 
@@ -159,6 +183,9 @@ class Email(BaseRule):
 class Digits(BaseRule):
     name = 'digits'
     message = _('{VALUE} of {FIELD} is not match digits')
+
+    def check_null(self):
+        pass
 
     def check_value(self):
         digits_regex = r'[0-9]+'
@@ -169,6 +196,9 @@ class Numberic(BaseRule):
     name = 'numberic'
     message = _('{VALUE} of {FIELD} is not match numberic')
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         int(str(self.field_value))
         regex = r'^[1-9]{1}[0-9]*'
@@ -178,6 +208,9 @@ class Numberic(BaseRule):
 class ActiveURL(BaseRule):
     name = 'active_url'
     message = '{VALUE} of {FIELD} field is not a active URL'
+
+    def check_null(self):
+        pass
 
     def check_value(self):
         try:
@@ -193,6 +226,9 @@ class Date(BaseRule):
 
     def get_format(self):
         return self.args[0] if 1 == len(self.args) and self.args[0] else self.format_str
+
+    def check_null(self):
+        pass
 
     def check_value(self):
         date_format = self.get_format()
@@ -217,6 +253,9 @@ class Datetime(BaseRule):
     def get_format(self):
         return self.args[0] if 1 == len(self.args) and self.args[0] else self.format_str
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         datetime_format = self.get_format()
         try:
@@ -237,6 +276,9 @@ class DateBefore(BaseRule):
     message = _('{VALUE} of {FIELD} is not before date {DATE}')
     field_format_str = '%Y-%m-%d'
     param_format_str = '%Y-%m-%d'
+
+    def check_null(self):
+        pass
 
     def check_value(self):
         param_date = self._get_param_date()
@@ -270,6 +312,9 @@ class DateAfter(BaseRule):
     field_format_str = '%Y-%m-%d'
     param_format_str = '%Y-%m-%d'
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         param_date = self._get_param_date()
         field_date = self._get_field_date()
@@ -302,6 +347,9 @@ class DateRange(BaseRule):
     field_format_str = '%Y-%m-%d'
     param_format_str = '%Y-%m-%d'
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         begin, end = self._get_param_date()
         date = self._get_field_date()
@@ -333,6 +381,9 @@ class DatetimeBefore(BaseRule):
     field_format_str = '%Y-%m-%d %H:%M:%S'
     param_format_str = '%Y-%m-%d %H:%M:%S'
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         field_datetime = self._get_field_datetime()
         param_datetime = self._get_param_datetime()
@@ -354,6 +405,9 @@ class DatetimeRange(BaseRule):
     message = _('{VALUE} of {FIELD} is not in range of {BEGIN} to {END}')
     field_format_str = '%Y-%m-%d %H:%M:%S'
     param_format_str = '%Y-%m-%d %H:%M:%S'
+
+    def check_null(self):
+        pass
 
     def check_value(self):
         field_datetime = self._get_field_datetime()
@@ -382,6 +436,9 @@ class DatetimeAfter(BaseRule):
     field_format_str = '%Y-%m-%d %H:%M:%S'
     param_format_str = '%Y-%m-%d %H:%M:%S'
 
+    def check_null(self):
+        pass
+
     def check_value(self):
         field_datetime = self._get_field_datetime()
         param_datetime = self._get_param_datetime()
@@ -405,6 +462,9 @@ class Required(BaseRule):
     def check_null(self):
         self.status = False
 
+    def check_value(self):
+        pass
+
 
 class Accepted(BaseRule):
     name = 'accepted'
@@ -413,6 +473,9 @@ class Accepted(BaseRule):
 
     def get_flag_str(self):
         return ', '.join(self.flag)
+
+    def check_null(self):
+        pass
 
     def check_value(self):
         self.status = self.check_flag()
@@ -459,6 +522,123 @@ class Unique(BaseRule):
         return self.message.format(VALUE=self.field_value, FIELD=self.field_name,
                                    MODEL=self.args[0],
                                    MODEL_FIELD=self.args[1])
+
+
+class AlphaDash(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class AlphaNumber(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class Array(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class DateBeforeEqual(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class DateAfterEqual(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class DateTimeBeforeEqual(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class DatetimeAfterEqual(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class Bail(BaseRule):
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+    # Stop running validation rules after the first validation failure.
+
+
+class Between(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class Boolean(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class Confirmed(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class DigitsBetween(BaseRule):
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class Password(BaseRule):
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
 
 
 class MetaValidator(type):
