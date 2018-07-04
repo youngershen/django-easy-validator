@@ -648,6 +648,62 @@ class DigitsBetween(BaseRule):
         pass
 
 
+class FileRuleMixin:
+    pass
+
+
+class Image(BaseRule, FileRuleMixin):
+    name = 'image'
+    ext = ['png', 'jpeg', 'gif']
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class Video(BaseRule, FileRuleMixin):
+    name = 'video'
+    ext = ['mp4', 'avi', 'mkv']
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class Audio(BaseRule, FileRuleMixin):
+    name = 'audio'
+    ext = ['mp3', 'wma', 'flac', 'ape']
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class Attachement(BaseRule, FileRuleMixin):
+    name = 'attachement'
+    ext = ['doc', 'zip', 'ppt', 'docx', 'excel']
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class File(BaseRule, FileRuleMixin):
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
 class Size(BaseRule):
     name = 'size'
     message = _('size of {FIELD} is not equals to {SIZE}')
