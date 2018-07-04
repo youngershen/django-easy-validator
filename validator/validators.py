@@ -9,8 +9,13 @@
 import re
 import socket
 import datetime
+import decimal
 from copy import deepcopy
 from django.utils.translation import ugettext_lazy as _
+
+# TODO : add check multi field feature to the validator
+
+# TODO : full document support
 
 
 class RuleNotFoundError(Exception):
@@ -27,9 +32,14 @@ class RuleMissedParameterError(Exception):
     pass
 
 
+class InvalidRuleParamterError(Exception):
+    pass
+
+
 class BaseRule:
     name = 'base_rule'
     message = _('{VALUE} of {FIELD} field is match rule {RULE_NAME}.')
+    description = _('describe the propuse of the current rule.')
 
     def __init__(self, field_name, field_value, *args, message=None):
         self.field_name = field_name
@@ -67,6 +77,7 @@ class BaseRule:
 class Switch(BaseRule):
     name = 'switch'
     message = _('{VALUE} of {FIELD} is not in [{SWITCH}]')
+    description = _('check if the value is in the params array.')
 
     def check_value(self):
         self.status = self.field_value in self._get_params()
@@ -88,6 +99,7 @@ class Alphabet(BaseRule):
     name = 'alphabet'
     regex = r'[a-zA-Z]+'
     message = _('{VALUE} of {FIELD} is not alphabet')
+    description = _('The field under validation must be entirely alphabetic characters.')
 
     def check_null(self):
         pass
@@ -457,7 +469,7 @@ class DatetimeAfter(BaseRule):
 
 class Required(BaseRule):
     name = 'required'
-    message = '{FIELD} field is required'
+    message = _('{FIELD} field is required')
 
     def check_null(self):
         self.status = False
@@ -468,7 +480,7 @@ class Required(BaseRule):
 
 class Accepted(BaseRule):
     name = 'accepted'
-    message = '{VALUE} of {FIELD} field must in which of : {FLAGS}'
+    message = _('{VALUE} of {FIELD} field must in which of : {FLAGS}')
     flag = ['yes', 'no', 'true', 'false', '0', '1']
 
     def get_flag_str(self):
@@ -493,7 +505,7 @@ class Accepted(BaseRule):
 
 class Unique(BaseRule):
     name = 'unique'
-    message = '{VALUE} of {MODEL} with {MODEL_FIELD} is not unique'
+    message = _('{VALUE} of {MODEL} with {MODEL_FIELD} is not unique')
 
     def check_null(self):
         pass
@@ -525,6 +537,9 @@ class Unique(BaseRule):
 
 
 class AlphaDash(BaseRule):
+    name = 'alpha_dash'
+    message = _('')
+    description = 'The field under validation may have alpha-numeric characters, as well as dashes and underscores.'
 
     def check_value(self):
         pass
@@ -633,12 +648,65 @@ class DigitsBetween(BaseRule):
         pass
 
 
-class Password(BaseRule):
+class Size(BaseRule):
+    name = 'size'
+    message = _('size of {FIELD} is not equals to {SIZE}')
+    description = _('The field under validation must have a size matching the given value. '
+                    'For string data, value corresponds to the number of characters. '
+                    'For numeric data, value corresponds to a given integer value. '
+                    'For an array, size corresponds to the count of the array. '
+                    'For files, size corresponds to the file size in kilobytes.')
+
+    types = ['string', 'number', 'array', 'file']
+
     def check_value(self):
-        pass
+        self._check_value()
 
     def check_null(self):
         pass
+
+    def _check_value(self):
+        _type = self.get_arg(0)
+        _size = self.get_arg(1)
+
+        if _type and _size and _type in self.types:
+            size = self._get_field_size(_type)
+            self.status = _size == size
+        else:
+            raise InvalidRuleParamterError(_('invalid rule paramters'))
+
+    def _get_field_size(self, _type):
+        if 'string' == _type:
+            return self._get_str_size()
+
+        if 'number' == _type:
+            return self._get_number_size()
+
+        if 'array' == _type:
+            return self._get_array_size()
+
+        if 'file' == _type:
+            return self._get_file_size()
+
+        raise InvalidRuleParamterError(_('invaldi rule parameters'))
+
+    def _get_str_size(self):
+        _value = str(self.field_value)
+        return len(_value)
+
+    def _get_number_size(self):
+        _value = decimal.Decimal(self.field_value)
+        return _value
+
+    def _get_file_size(self):
+        pass
+
+    def _get_array_size(self):
+        pass
+
+    def get_message(self):
+        size = self._get_field_size()
+        return self.message.format(FIELD=self.field_name, SIZE=size)
 
 
 class MetaValidator(type):
