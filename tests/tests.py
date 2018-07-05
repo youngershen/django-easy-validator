@@ -5,8 +5,9 @@
 # PHONE   : 13811754531
 # WECHAT  : 13811754531
 # WEBSITE : www.punkcoder.cn
-
+from io import BytesIO
 from django.test import TestCase
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from validator import Validator
 
 
@@ -251,7 +252,7 @@ class Size(Validator):
     username = 'size:string,5'
     number = 'size:number,5'
     profile = 'size:array,2'
-    avatar = 'size:file,5'
+    avatar = 'size:file,14'
 
     message = {
         'username': {
@@ -961,12 +962,14 @@ class UniqueTestCase(TestCase):
 
 class SizeTestCase(TestCase):
     def setUp(self):
+        self.avatar = self.get_avatar()
         self.validator = Size
+
         self.valid_data = {
             'username': 'abcde',
             'number': '5',
             'profile': 'age,12',
-            'avatar': ''
+            'avatar': self.avatar
         }
 
         self.invalid_data = {
@@ -979,3 +982,21 @@ class SizeTestCase(TestCase):
     def test_valid(self):
         validator = self.validator(self.valid_data)
         self.assertTrue(validator.validate())
+
+    def get_avatar(self):
+        buffer = BytesIO()
+        self.get_temp_file(buffer)
+        avatar = InMemoryUploadedFile(
+            file=buffer,
+            field_name='avatar',
+            name='avatar',
+            size=len(buffer.getvalue()),
+            charset=None,
+            content_type=None
+        )
+        return avatar
+
+    @staticmethod
+    def get_temp_file(buffer):
+        with open('tests/assets/linux.jpeg', mode='rb') as f:
+            buffer.write(f.read())

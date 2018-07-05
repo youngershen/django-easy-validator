@@ -755,7 +755,8 @@ class Size(BaseRule):
         return _value
 
     def _get_file_size(self):
-        pass
+        size = self.field_value.size
+        return round(size / 1000)
 
     def _get_array_size(self):
         _value = len(self.field_value.split(','))
