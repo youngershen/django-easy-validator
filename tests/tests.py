@@ -246,6 +246,29 @@ class Unique(Validator):
         }
     }
 
+
+class Size(Validator):
+    username = 'size:string,5'
+    number = 'size:number,5'
+    profile = 'size:array,2'
+    avatar = 'size:file,5'
+
+    message = {
+        'username': {
+            'size': 'size of username is not equals to 5'
+        },
+        'number': {
+            'size': 'size of number is not equals to 5'
+        },
+        'profile': {
+            'size': 'size of profile is not equals to 2'
+        },
+        'avatar': {
+            'size': 'size of avatar is not equals to 5kb'
+        }
+    }
+
+
 # =====================================================================
 
 
@@ -934,3 +957,25 @@ class UniqueTestCase(TestCase):
         self.assertFalse(validator.validate())
         message = validator.get_message()
         self.assertDictEqual(message, self.message)
+
+
+class SizeTestCase(TestCase):
+    def setUp(self):
+        self.validator = Size
+        self.valid_data = {
+            'username': 'abcde',
+            'number': '5',
+            'profile': 'age,12',
+            'avatar': ''
+        }
+
+        self.invalid_data = {
+            'username': '',
+            'number': '',
+            'profile': '',
+            'avatar': ''
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())

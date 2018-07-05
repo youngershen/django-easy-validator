@@ -727,7 +727,7 @@ class Size(BaseRule):
 
         if _type and _size and _type in self.types:
             size = self._get_field_size(_type)
-            self.status = _size == size
+            self.status = int(_size) == int(size)
         else:
             raise InvalidRuleParamterError(_('invalid rule paramters'))
 
@@ -758,10 +758,12 @@ class Size(BaseRule):
         pass
 
     def _get_array_size(self):
-        pass
+        _value = len(self.field_value.split(','))
+        return _value
 
     def get_message(self):
-        size = self._get_field_size()
+        _type = self.get_arg(0)
+        size = self._get_field_size(_type)
         return self.message.format(FIELD=self.field_name, SIZE=size)
 
 
@@ -889,5 +891,6 @@ default_rules = {
     Cellphone.get_name(): Cellphone,
     Alphabet.get_name(): Alphabet,
     Switch.get_name(): Switch,
-    Unique.get_name(): Unique
+    Unique.get_name(): Unique,
+    Size.get_name(): Size
 }
