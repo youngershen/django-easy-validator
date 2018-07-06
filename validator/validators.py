@@ -913,5 +913,7 @@ default_rules = {
     Alphabet.get_name(): Alphabet,
     Switch.get_name(): Switch,
     Unique.get_name(): Unique,
-    Size.get_name(): Size
+    Size.get_name(): Size,
+    Min.get_name(): Min,
+    Max.get_name(): Max
 }
