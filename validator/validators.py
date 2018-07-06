@@ -116,7 +116,7 @@ class MinLength(BaseRule):
         pass
 
     def check_value(self):
-        self.status = len(self.field_value) >= int(self.args[0])
+        self.status = len(str(self.field_value)) >= int(self.args[0])
 
     def get_message(self):
         return self.message.format(VALUE=self.field_value, FIELD=self.field_name, MIN=self.args[0])
@@ -130,7 +130,7 @@ class MaxLength(BaseRule):
         pass
 
     def check_value(self):
-        self.status = len(self.field_value) <= int(self.args[0])
+        self.status = len(str(self.field_value)) <= int(self.args[0])
 
     def get_message(self):
         return self.message.format(VALUE=self.field_value, FIELD=self.field_name, MAX=self.args[0])
@@ -704,32 +704,21 @@ class File(BaseRule, FileRuleMixin):
         pass
 
 
-class Size(BaseRule):
-    name = 'size'
-    message = _('size of {FIELD} is not equals to {SIZE}')
-    description = _('The field under validation must have a size matching the given value. '
-                    'For string data, value corresponds to the number of characters. '
-                    'For numeric data, value corresponds to a given integer value. '
-                    'For an array, size corresponds to the count of the array. '
-                    'For files, size corresponds to the file size in kilobytes.')
-
+class SizeMixin:
     types = ['string', 'number', 'array', 'file']
 
     def check_value(self):
-        self._check_value()
-
-    def check_null(self):
-        pass
-
-    def _check_value(self):
         _type = self.get_arg(0)
         _size = self.get_arg(1)
 
         if _type and _size and _type in self.types:
             size = self._get_field_size(_type)
-            self.status = int(_size) == int(size)
+            self._check_size(float(_size), float(size))
         else:
             raise InvalidRuleParamterError(_('invalid rule paramters'))
+
+    def check_null(self):
+        pass
 
     def _get_field_size(self, _type):
         if 'string' == _type:
@@ -744,19 +733,19 @@ class Size(BaseRule):
         if 'file' == _type:
             return self._get_file_size()
 
-        raise InvalidRuleParamterError(_('invaldi rule parameters'))
+        raise InvalidRuleParamterError(_('invalid rule parameters'))
 
     def _get_str_size(self):
         _value = str(self.field_value)
         return len(_value)
 
     def _get_number_size(self):
-        _value = decimal.Decimal(self.field_value)
+        _value = float(self.field_value)
         return _value
 
     def _get_file_size(self):
         size = self.field_value.size
-        return round(size / 1000)
+        return size / 1000
 
     def _get_array_size(self):
         _value = len(self.field_value.split(','))
@@ -766,6 +755,37 @@ class Size(BaseRule):
         _type = self.get_arg(0)
         size = self._get_field_size(_type)
         return self.message.format(FIELD=self.field_name, SIZE=size)
+
+
+class Min(SizeMixin, BaseRule):
+    name = 'min'
+    message = _('size of {FIELD} is larger than {SIZE}')
+    description = _('')
+
+    def _check_size(self, _size, size):
+        self.status = _size <= size
+
+
+class Max(SizeMixin, BaseRule):
+    name = 'max'
+    message = _('size of {FIELD} is smaller than {SIZE}')
+    description = _('')
+
+    def _check_size(self, _size, size):
+        self.status = _size >= size
+
+
+class Size(SizeMixin, BaseRule):
+    name = 'size'
+    message = _('size of {FIELD} is not equals to {SIZE}')
+    description = _('The field under validation must have a size matching the given value. '
+                    'For string data, value corresponds to the number of characters. '
+                    'For numeric data, value corresponds to a given integer value. '
+                    'For an array, size corresponds to the count of the array. '
+                    'For files, size corresponds to the file size in kilobytes.')
+
+    def _check_size(self, _size, size):
+        self.status = _size == size
 
 
 class MetaValidator(type):

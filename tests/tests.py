@@ -252,7 +252,7 @@ class Size(Validator):
     username = 'size:string,5'
     number = 'size:number,5'
     profile = 'size:array,2'
-    avatar = 'size:file,14'
+    avatar = 'size:file,13.903'
 
     message = {
         'username': {
@@ -265,7 +265,7 @@ class Size(Validator):
             'size': 'size of profile is not equals to 2'
         },
         'avatar': {
-            'size': 'size of avatar is not equals to 5kb'
+            'size': 'size of avatar is not equals to 13.903KB'
         }
     }
 
