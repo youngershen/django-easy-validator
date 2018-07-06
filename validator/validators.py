@@ -9,7 +9,6 @@
 import re
 import socket
 import datetime
-import decimal
 from copy import deepcopy
 from django.utils.translation import ugettext_lazy as _
 
