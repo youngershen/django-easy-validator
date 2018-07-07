@@ -648,7 +648,32 @@ class DigitsBetween(BaseRule):
 
 
 class FileRuleMixin:
-    pass
+    exts = ['doc', 'zip', 'excel', 'ppt', 'png', 'jpg', 'gif']
+    message = _('{FILE_NAME} is not allowed to upload')
+    description = _('check the uploaded file ext if allowed to upload this kind of file. ')
+
+    def check_value(self):
+        self._check_file()
+
+    def check_null(self):
+        pass
+
+    def _check_file(self):
+        ext = self._get_ext()
+        self.status = ext in self.exts
+
+    def _check_ext(self):
+        ext = self._get_ext()
+        return ext in self.exts
+
+    def _get_ext(self):
+        name = self.field_value.name
+        ext = name.split('.')[-1]
+        return ext
+
+    def get_message(self):
+        file_name = self.field_value.name
+        return self.message.format(FILE_NAME=file_name)
 
 
 class Image(BaseRule, FileRuleMixin):
@@ -684,23 +709,14 @@ class Audio(BaseRule, FileRuleMixin):
         pass
 
 
-class Attachement(BaseRule, FileRuleMixin):
+class Attachement(FileRuleMixin, BaseRule):
     name = 'attachement'
     ext = ['doc', 'zip', 'ppt', 'docx', 'excel']
-
-    def check_value(self):
-        pass
-
-    def check_null(self):
-        pass
+    description = _('')
 
 
-class File(BaseRule, FileRuleMixin):
-    def check_value(self):
-        pass
-
-    def check_null(self):
-        pass
+class File(FileRuleMixin, BaseRule):
+    name = 'file'
 
 
 class SizeMixin:
@@ -718,6 +734,9 @@ class SizeMixin:
 
     def check_null(self):
         pass
+
+    def _check_size(self, *args, **kwargs):
+        raise NotImplementedError()
 
     def _get_field_size(self, _type):
         if 'string' == _type:

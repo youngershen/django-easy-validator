@@ -992,8 +992,9 @@ class SizeTestCase(TestCase):
             name='avatar',
             size=len(buffer.getvalue()),
             charset=None,
-            content_type=None
+            content_type='image/jpeg'
         )
+        self.assertTrue(avatar.content_type)
         return avatar
 
     @staticmethod
