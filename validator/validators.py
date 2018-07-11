@@ -648,10 +648,6 @@ class DigitsBetween(BaseRule):
 
 
 class FileRuleMixin:
-    exts = ['doc', 'zip', 'excel', 'ppt', 'png', 'jpg', 'gif']
-    message = _('{FILE_NAME} is not allowed to upload')
-    description = _('check the uploaded file ext if allowed to upload this kind of file. ')
-
     def check_value(self):
         self._check_file()
 
@@ -676,47 +672,31 @@ class FileRuleMixin:
         return self.message.format(FILE_NAME=file_name)
 
 
-class Image(BaseRule, FileRuleMixin):
-    name = 'image'
-    ext = ['png', 'jpeg', 'gif']
-
-    def check_value(self):
-        pass
-
-    def check_null(self):
-        pass
-
-
-class Video(BaseRule, FileRuleMixin):
-    name = 'video'
-    ext = ['mp4', 'avi', 'mkv']
-
-    def check_value(self):
-        pass
-
-    def check_null(self):
-        pass
-
-
-class Audio(BaseRule, FileRuleMixin):
-    name = 'audio'
-    ext = ['mp3', 'wma', 'flac', 'ape']
-
-    def check_value(self):
-        pass
-
-    def check_null(self):
-        pass
-
-
-class Attachement(FileRuleMixin, BaseRule):
-    name = 'attachement'
-    ext = ['doc', 'zip', 'ppt', 'docx', 'excel']
-    description = _('')
-
-
 class File(FileRuleMixin, BaseRule):
     name = 'file'
+    exts = ['doc', 'zip', 'excel', 'ppt', 'png', 'jpg', 'gif']
+    message = _('{FILE_NAME} is not allowed to upload')
+    description = _('check the uploaded file ext if allowed to upload this kind of file. ')
+
+
+class Image(File):
+    name = 'image'
+    exts = ['png', 'jpeg', 'gif']
+
+
+class Video(File):
+    name = 'video'
+    exts = ['mp4', 'avi', 'mkv']
+
+
+class Audio(File):
+    name = 'audio'
+    exts = ['mp3', 'wma', 'flac', 'ape']
+
+
+class Attachement(File):
+    name = 'attachement'
+    exts = ['doc', 'zip', 'ppt', 'docx', 'excel']
 
 
 class SizeMixin:
