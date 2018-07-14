@@ -658,16 +658,23 @@ class FileRuleMixin:
 
     def _check_file(self):
         ext = self._get_ext()
-        self.status = ext in self.exts
+        exts = self._get_exts()
+        print(ext)
+        print(exts)
+        self.status = ext in exts
 
     def _check_ext(self):
         ext = self._get_ext()
-        return ext in self.exts
+        exts = self._get_exts()
+        return ext in exts
 
     def _get_ext(self):
         name = self.field_value.name
         ext = name.split('.')[-1]
         return ext
+
+    def _get_exts(self):
+        return self.exts
 
     def get_message(self):
         file_name = self.field_value.name
@@ -676,15 +683,11 @@ class FileRuleMixin:
 
 class File(FileRuleMixin, BaseRule):
     name = 'file'
-    exts = ['doc', 'zip', 'excel', 'ppt', 'png', 'jpg', 'gif']
     message = _('{FILE_NAME} is not allowed to upload')
     description = _('check the uploaded file ext if allowed to upload this kind of file. ')
 
-    def _check_ext(self):
-        ext = self._get_ext()
-        exts = self.args
-
-        return ext in self.exts
+    def _get_exts(self):
+        return self.args
 
 
 class Image(File):

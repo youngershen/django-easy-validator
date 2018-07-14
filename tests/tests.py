@@ -275,7 +275,7 @@ class File(Validator):
 
     message = {
         'file': {
-            'file': ''
+            'file': 'file is not allowed to upload'
         }
     }
 
@@ -1010,3 +1010,46 @@ class SizeTestCase(TestCase):
     def get_temp_file(buffer):
         with open('tests/assets/linux.jpeg', mode='rb') as f:
             buffer.write(f.read())
+
+
+class FileTestCase(TestCase):
+    def setUp(self):
+        self.validator = File
+        self.valid_data = {
+            'file': self.get_file()
+        }
+        self.invalid_data = {
+            'file': self.get_file('tgz')
+        }
+
+        self.message = {
+            'file': {
+                'file': 'file is not allowed to upload'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+    @staticmethod
+    def get_file(_type='jpeg'):
+        buffer = BytesIO()
+        with open('tests/assets/linux.' + _type, mode='rb') as f:
+            buffer.write(f.read())
+
+        file = InMemoryUploadedFile(
+            file=buffer,
+            field_name='file',
+            name='file.' + _type,
+            size=len(buffer.getvalue()),
+            charset=None,
+            content_type='image/jpeg'
+        )
+        return file
