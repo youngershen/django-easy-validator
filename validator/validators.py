@@ -39,11 +39,12 @@ class BaseRule:
     name = 'base_rule'
     message = _('{VALUE} of {FIELD} field is match rule {RULE_NAME}.')
     description = _('describe the propuse of the current rule.')
+    parse_args = True
 
-    def __init__(self, field_name, field_value, *args, message=None):
+    def __init__(self, field_name, field_value, args, message=None):
         self.field_name = field_name
         self.field_value = field_value
-        self.args = args
+        self.args = list(map(lambda d: d.strip(), args.split(','))) if self.parse_args else args
         self.status = True
         self.message = message if message else self.message
 
@@ -162,6 +163,7 @@ class Cellphone(BaseRule):
 class Regex(BaseRule):
     name = 'regex'
     message = _('{VALUE} of {FIELD} is not mathc the pattern {REGEX}')
+    parse_args = False
 
     def check_null(self):
         pass
@@ -173,7 +175,7 @@ class Regex(BaseRule):
         return self.message.format(VALUE=self.field_value, FIELD=self.field_name, REGEX=self._get_regex())
 
     def _get_regex(self):
-        return self.args[0] if len(self.args) == 1 else None
+        return self.args
 
     def _match(self):
         return re.match(self._get_regex(), self.field_value)
@@ -678,6 +680,12 @@ class File(FileRuleMixin, BaseRule):
     message = _('{FILE_NAME} is not allowed to upload')
     description = _('check the uploaded file ext if allowed to upload this kind of file. ')
 
+    def _check_ext(self):
+        ext = self._get_ext()
+        exts = self.args
+
+        return ext in self.exts
+
 
 class Image(File):
     name = 'image'
@@ -798,7 +806,6 @@ class MetaValidator(type):
 
 
 class Validator(metaclass=MetaValidator):
-    parse_args = True
 
     def __init__(self, data, request=None, extra_rules=None):
         self.data = deepcopy(data)
@@ -844,7 +851,7 @@ class Validator(metaclass=MetaValidator):
         params = rule_info.get('params')
         rule_class = self._get_origin_rule(rule_name)
         message = getattr(self, 'message', {}).get(name, {}).get(rule_name, None)
-        instance = rule_class(name, value, *params, message=message)
+        instance = rule_class(name, value, params, message=message)
         return instance
 
     def _get_origin_rule(self, name):
@@ -874,15 +881,18 @@ class Validator(metaclass=MetaValidator):
         rules = map(self._get_rule_info, validation.split('|'))
         return rules
 
-    def _get_rule_info(self, rule):
+    @staticmethod
+    def _get_rule_info(rule):
         info = list(map(lambda s: s.strip(), rule.split(':', 1)))
         name = info[0]
-        if self.parse_args:
-            params = list(map(lambda s: s.strip(), ''.join(info[1:]).split(',')))
-        else:
-            params = list(map(lambda s: s.strip(), info[1:]))
+        params = info[1] if len(info) == 2 else ''
 
-        params = params if len(params) > 0 and params[0] is not None else ()
+        # if self.parse_args:
+        #     params = list(map(lambda s: s.strip(), ''.join(info[1:]).split(',')))
+        # else:
+        #     params = list(map(lambda s: s.strip(), info[1:]))
+        #
+        # params = params if len(params) > 0 and params[0] is not None else ()
 
         rules = {'name': name, 'params': params}
         return rules
@@ -913,5 +923,10 @@ default_rules = {
     Unique.get_name(): Unique,
     Size.get_name(): Size,
     Min.get_name(): Min,
-    Max.get_name(): Max
+    Max.get_name(): Max,
+    File.get_name(): File,
+    Image.get_name(): Image,
+    Video.get_name(): Video,
+    Audio.get_name(): Audio,
+    Attachement.get_name(): Attachement
 }

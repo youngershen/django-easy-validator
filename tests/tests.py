@@ -270,6 +270,15 @@ class Size(Validator):
     }
 
 
+class File(Validator):
+    file = 'file:png,jpeg,zip,rar'
+
+    message = {
+        'file': {
+            'file': ''
+        }
+    }
+
 # =====================================================================
 
 
