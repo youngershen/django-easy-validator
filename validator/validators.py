@@ -111,6 +111,7 @@ class Alphabet(BaseRule):
 class MinLength(BaseRule):
     name = 'min_length'
     message = _('{VALUE} of {FIELD} is shotter than {MIN}')
+    description = _('check the field as a string and test the length if suites the given number')
 
     def check_null(self):
         pass
@@ -125,6 +126,7 @@ class MinLength(BaseRule):
 class MaxLength(BaseRule):
     name = 'max_length'
     message = _('{VALUE} of {FIELD} is longger than {MAX}')
+    description = _('check the field as a string and test the length if suites the given number')
 
     def check_null(self):
         pass
@@ -139,6 +141,7 @@ class MaxLength(BaseRule):
 class IDS(BaseRule):
     name = 'ids'
     message = _('{VALUE} of {FIELD} is not a id series')
+    description = _('check it the given value is id string such as 1,2,3,4')
     regex = r'^([0-9]+,)+[0-9]+$'
 
     def check_null(self):
@@ -152,6 +155,8 @@ class Cellphone(BaseRule):
     name = 'cellphone'
     regex = r'^([\+]?[0-9]{2})?1[0-9]{10}$'
     message = _('{VALUE} of {FIELD} is not a cellphone number')
+    description = _('check if the given value is a cellphone number , '
+                    'if there is a internation code it sould begin with + .')
 
     def check_null(self):
         pass
@@ -163,6 +168,7 @@ class Cellphone(BaseRule):
 class Regex(BaseRule):
     name = 'regex'
     message = _('{VALUE} of {FIELD} is not mathc the pattern {REGEX}')
+    description = _('check the given value if suits the regex')
     parse_args = False
 
     def check_null(self):
@@ -184,6 +190,7 @@ class Regex(BaseRule):
 class Email(BaseRule):
     name = 'email'
     message = _('{VALUE} of {FIELD} is not an email address')
+    description = _('check for email addresses')
     pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
 
     def check_null(self):
@@ -659,8 +666,6 @@ class FileRuleMixin:
     def _check_file(self):
         ext = self._get_ext()
         exts = self._get_exts()
-        print(ext)
-        print(exts)
         self.status = ext in exts
 
     def _check_ext(self):
@@ -889,14 +894,6 @@ class Validator(metaclass=MetaValidator):
         info = list(map(lambda s: s.strip(), rule.split(':', 1)))
         name = info[0]
         params = info[1] if len(info) == 2 else ''
-
-        # if self.parse_args:
-        #     params = list(map(lambda s: s.strip(), ''.join(info[1:]).split(',')))
-        # else:
-        #     params = list(map(lambda s: s.strip(), info[1:]))
-        #
-        # params = params if len(params) > 0 and params[0] is not None else ()
-
         rules = {'name': name, 'params': params}
         return rules
 
