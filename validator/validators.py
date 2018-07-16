@@ -203,6 +203,7 @@ class Email(BaseRule):
 class Digits(BaseRule):
     name = 'digits'
     message = _('{VALUE} of {FIELD} is not match digits')
+    description = _('check if the given value is made of digits')
 
     def check_null(self):
         pass
@@ -215,6 +216,7 @@ class Digits(BaseRule):
 class Numberic(BaseRule):
     name = 'numberic'
     message = _('{VALUE} of {FIELD} is not match numberic')
+    description = _('check if the given value is a integer number')
 
     def check_null(self):
         pass
@@ -228,6 +230,7 @@ class Numberic(BaseRule):
 class ActiveURL(BaseRule):
     name = 'active_url'
     message = '{VALUE} of {FIELD} field is not a active URL'
+    description = _('check if the given value if an active url you can visit.')
 
     def check_null(self):
         pass
