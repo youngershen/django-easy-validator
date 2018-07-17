@@ -597,39 +597,127 @@ class Array(BaseRule):
 
 
 class DateBeforeEqual(BaseRule):
-
-    def check_value(self):
-        pass
+    name = 'date_before_equal'
+    message = _('{VALUE} of {FIELD} is not before or equal date {DATE}')
+    field_format_str = '%Y-%m-%d'
+    param_format_str = '%Y-%m-%d'
+    description = _('check the given value if before or equal the date time format of format_str')
 
     def check_null(self):
         pass
+
+    def check_value(self):
+        param_date = self._get_param_date()
+        field_date = self._get_field_date()
+        self.status = field_date <= param_date
+
+    def _get_param_date(self):
+        date_str = self.get_arg(0)
+
+        if not date_str:
+            raise RuleMissedParameterError(_('DateBefore Rule missed a paramter'))
+
+        param_format_str = self.get_arg(1) if self.get_arg(1) else self.param_format_str
+        date = datetime.datetime.strptime(date_str, param_format_str)
+        return date
+
+    def _get_field_date(self):
+        field_format_str = self.get_arg(2) if self.get_arg(2) else self.field_format_str
+        date = datetime.datetime.strptime(self.field_value, field_format_str)
+        return date
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value,
+                                   FIELD=self.field_name,
+                                   DATE=self.args[0])
 
 
 class DateAfterEqual(BaseRule):
-
-    def check_value(self):
-        pass
+    name = 'date_after_equal'
+    message = _('{VALUE} of {FIELD} is not after or equal date {DATE}')
+    field_format_str = '%Y-%m-%d'
+    param_format_str = '%Y-%m-%d'
+    description = _('check the given value if after or equal the date time format of format_str')
 
     def check_null(self):
         pass
+
+    def check_value(self):
+        param_date = self._get_param_date()
+        field_date = self._get_field_date()
+        self.status = field_date >= param_date
+
+    def _get_param_date(self):
+        date_str = self.args[0]
+
+        if not date_str:
+            raise RuleMissedParameterError('date_after missed a parameter')
+
+        param_format_str = self.get_arg(1) if self.get_arg(1) else self.param_format_str
+        date = datetime.datetime.strptime(date_str, param_format_str)
+        return date
+
+    def _get_field_date(self):
+        field_format_str = self.get_arg(2) if self.get_arg(2) else self.field_format_str
+        date = datetime.datetime.strptime(self.field_value, field_format_str)
+        return date
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value,
+                                   FIELD=self.field_name,
+                                   DATE=self.args[0])
 
 
 class DateTimeBeforeEqual(BaseRule):
-
-    def check_value(self):
-        pass
+    name = 'datetime_before_equal'
+    message = _('{VALUE} of {FIELD} is not before or equal {DATETIME}')
+    field_format_str = '%Y-%m-%d %H:%M:%S'
+    param_format_str = '%Y-%m-%d %H:%M:%S'
+    description = _('check the given value if before or equal the datetime format of format_str')
 
     def check_null(self):
         pass
+
+    def check_value(self):
+        field_datetime = self._get_field_datetime()
+        param_datetime = self._get_param_datetime()
+        self.status = field_datetime <= param_datetime
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value, FIELD=self.field_name, DATETIME=self.args[0])
+
+    def _get_field_datetime(self):
+        return datetime.datetime.strptime(self.field_value, self.field_format_str)
+
+    def _get_param_datetime(self):
+        datetime_str = self.args[0] if len(self.args) == 1 else None
+        return datetime.datetime.strptime(datetime_str, self.param_format_str)
 
 
 class DatetimeAfterEqual(BaseRule):
-
-    def check_value(self):
-        pass
+    name = 'datetime_after_equal'
+    message = _('{VALUE} of {FIELD} is not after or equal {DATETIME}')
+    field_format_str = '%Y-%m-%d %H:%M:%S'
+    param_format_str = '%Y-%m-%d %H:%M:%S'
+    description = _('check the given value if after or equal the datetime format of format_str')
 
     def check_null(self):
         pass
+
+    def check_value(self):
+        field_datetime = self._get_field_datetime()
+        param_datetime = self._get_param_datetime()
+        self.status = field_datetime >= param_datetime
+
+    def get_message(self):
+        return self.message.format(VALUE=self.field_value, FIELD=self.field_name, DATETIME=self.args[0])
+
+    def _get_field_datetime(self):
+        return datetime.datetime.strptime(self.field_value, self.field_format_str)
+
+    def _get_param_datetime(self):
+        datetime_str = self.args[0] if len(self.args) == 1 else None
+        return datetime.datetime.strptime(datetime_str, self.param_format_str)
 
 
 class Bail(BaseRule):
@@ -953,5 +1041,9 @@ default_rules = {
     Attachement.get_name(): Attachement,
     AlphaDash.get_name(): AlphaDash,
     AlphaNumber.get_name(): AlphaNumber,
-    Array.get_name(): Array
+    Array.get_name(): Array,
+    DateBeforeEqual.get_name(): DateBeforeEqual,
+    DateAfterEqual.get_name(): DateAfterEqual,
+    DateTimeBeforeEqual.get_name(): DateTimeBeforeEqual,
+    DatetimeAfterEqual.get_name(): DatetimeAfterEqual
 }
