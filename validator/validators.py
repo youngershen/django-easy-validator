@@ -565,7 +565,7 @@ class AlphaDash(BaseRule):
     description = _('The field under validation may have alpha-numeric characters, as well as dashes and underscores.')
 
     def check_value(self):
-        return re.match(self.regex, self.field_value)
+        self.status = re.match(self.regex, self.field_value)
 
     def check_null(self):
         pass
@@ -578,7 +578,7 @@ class AlphaNumber(BaseRule):
     description = _('the given value must conbines with only alpha ')
 
     def check_value(self):
-        return re.match(self.regex, self.field_value)
+        self.status = re.match(self.regex, self.field_value)
 
     def check_null(self):
         pass
@@ -590,7 +590,7 @@ class Array(BaseRule):
     description = _('the given must be a comma splited string.')
 
     def check_value(self):
-        return True if self.field_value.split(',') else False
+        self.status = True if self.field_value.split(',') else False
 
     def check_null(self):
         pass
@@ -731,12 +731,29 @@ class Bail(BaseRule):
 
 
 class Between(BaseRule):
+    name = 'between'
+    message = _('{VALUE} is not between of the {START} -> {END}')
+    description = _('check the given value if between the params')
 
     def check_value(self):
-        pass
+        start, stop = self._get_params()
+        self.status = start <= int(self.field_value) <= stop
 
     def check_null(self):
         pass
+
+    def get_message(self):
+        start, stop = self._get_params()
+        return self.message.format(VALUE=self.field_value, START=start, STOP=stop)
+
+    def _get_params(self):
+        if len(self.args) < 2:
+            raise InvalidRuleParamterError(_('between rule needs 2 params.'))
+
+        else:
+            start = int(self.args[0])
+            stop = int(self.args[1])
+            return start, stop
 
 
 class Boolean(BaseRule):
@@ -1045,5 +1062,6 @@ default_rules = {
     DateBeforeEqual.get_name(): DateBeforeEqual,
     DateAfterEqual.get_name(): DateAfterEqual,
     DateTimeBeforeEqual.get_name(): DateTimeBeforeEqual,
-    DatetimeAfterEqual.get_name(): DatetimeAfterEqual
+    DatetimeAfterEqual.get_name(): DatetimeAfterEqual,
+    Between.get_name(): Between
 }
