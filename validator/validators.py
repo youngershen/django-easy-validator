@@ -246,6 +246,7 @@ class Date(BaseRule):
     name = 'date'
     message = _('{VALUE} of {FIELD} field is not a valid date format as {FORMAT_STR}')
     format_str = '%Y-%m-%d'
+    description = _('check the given value if suits the date format of format_str')
 
     def get_format(self):
         return self.args[0] if 1 == len(self.args) and self.args[0] else self.format_str
@@ -272,6 +273,7 @@ class Datetime(BaseRule):
     name = 'datetime'
     message = _('{VALUE} of {FIELD} field is not a valid datetime format as {FORMAT_STR}')
     format_str = '%Y-%m-%d %H:%M:%S'
+    description = _('check the given value if suits the date time format of format_str')
 
     def get_format(self):
         return self.args[0] if 1 == len(self.args) and self.args[0] else self.format_str
@@ -299,6 +301,7 @@ class DateBefore(BaseRule):
     message = _('{VALUE} of {FIELD} is not before date {DATE}')
     field_format_str = '%Y-%m-%d'
     param_format_str = '%Y-%m-%d'
+    description = _('check the given value if before the date time format of format_str')
 
     def check_null(self):
         pass
@@ -334,6 +337,7 @@ class DateAfter(BaseRule):
     message = _('{VALUE} of {FIELD} is not after date {DATE}')
     field_format_str = '%Y-%m-%d'
     param_format_str = '%Y-%m-%d'
+    description = _('check the given value if after the date time format of format_str')
 
     def check_null(self):
         pass
@@ -369,6 +373,7 @@ class DateRange(BaseRule):
     message = _('{VALUE} of {FIELD} is not in range date of {BEGIN} to {END}')
     field_format_str = '%Y-%m-%d'
     param_format_str = '%Y-%m-%d'
+    description = _('check the given value if between the param date string')
 
     def check_null(self):
         pass
@@ -403,6 +408,7 @@ class DatetimeBefore(BaseRule):
     message = _('{VALUE} of {FIELD} is not before {DATETIME}')
     field_format_str = '%Y-%m-%d %H:%M:%S'
     param_format_str = '%Y-%m-%d %H:%M:%S'
+    description = _('check the given value if before the datetime format of format_str')
 
     def check_null(self):
         pass
@@ -428,6 +434,7 @@ class DatetimeRange(BaseRule):
     message = _('{VALUE} of {FIELD} is not in range of {BEGIN} to {END}')
     field_format_str = '%Y-%m-%d %H:%M:%S'
     param_format_str = '%Y-%m-%d %H:%M:%S'
+    description = _('check the given value if between the datetime format of the param datetime')
 
     def check_null(self):
         pass
@@ -458,6 +465,7 @@ class DatetimeAfter(BaseRule):
     message = _('{VALUE} of {FIELD} is not in after {DATETIME}')
     field_format_str = '%Y-%m-%d %H:%M:%S'
     param_format_str = '%Y-%m-%d %H:%M:%S'
+    description = _('check the given value if after the datetime format of format_str')
 
     def check_null(self):
         pass
@@ -481,6 +489,7 @@ class DatetimeAfter(BaseRule):
 class Required(BaseRule):
     name = 'required'
     message = _('{FIELD} field is required')
+    description = _('the given field is required')
 
     def check_null(self):
         self.status = False
@@ -493,6 +502,7 @@ class Accepted(BaseRule):
     name = 'accepted'
     message = _('{VALUE} of {FIELD} field must in which of : {FLAGS}')
     flag = ['yes', 'no', 'true', 'false', '0', '1']
+    description = _('the given field must in the flag array')
 
     def get_flag_str(self):
         return ', '.join(self.flag)
@@ -517,6 +527,7 @@ class Accepted(BaseRule):
 class Unique(BaseRule):
     name = 'unique'
     message = _('{VALUE} of {MODEL} with {MODEL_FIELD} is not unique')
+    description = _('the given value must unique of the table')
 
     def check_null(self):
         pass
@@ -549,29 +560,37 @@ class Unique(BaseRule):
 
 class AlphaDash(BaseRule):
     name = 'alpha_dash'
-    message = _('')
-    description = 'The field under validation may have alpha-numeric characters, as well as dashes and underscores.'
+    message = _('{VALUE} is invalid alpha dash format string.')
+    regex = '[a-zA-Z-_]+'
+    description = _('The field under validation may have alpha-numeric characters, as well as dashes and underscores.')
 
     def check_value(self):
-        pass
+        return re.match(self.regex, self.field_value)
 
     def check_null(self):
         pass
 
 
 class AlphaNumber(BaseRule):
+    name = 'alpha_number'
+    message = _('{VALUE} is not a alpha-number string.')
+    regex = '[a-zA-Z0-9]+'
+    description = _('the given value must conbines with only alpha ')
 
     def check_value(self):
-        pass
+        return re.match(self.regex, self.field_value)
 
     def check_null(self):
         pass
 
 
 class Array(BaseRule):
+    name = 'array'
+    message = _('{VALUE} is not a comma splited string')
+    description = _('the given must be a comma splited string.')
 
     def check_value(self):
-        pass
+        return True if self.field_value.split(',') else False
 
     def check_null(self):
         pass
@@ -931,5 +950,8 @@ default_rules = {
     Image.get_name(): Image,
     Video.get_name(): Video,
     Audio.get_name(): Audio,
-    Attachement.get_name(): Attachement
+    Attachement.get_name(): Attachement,
+    AlphaDash.get_name(): AlphaDash,
+    AlphaNumber.get_name(): AlphaNumber,
+    Array.get_name(): Array
 }
