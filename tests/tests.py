@@ -8,7 +8,23 @@
 from io import BytesIO
 from django.test import TestCase
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from validator import Validator
+from validator import Validator, BaseRule
+
+
+class TestRule(BaseRule):
+    name = 'test_rule'
+    message = 'test custom rule failed'
+    description = 'just for custom rule test'
+
+    def check_value(self):
+        self.status = True if self.field_value == 'test' else False
+
+    def check_null(self):
+        pass
+
+
+class TestRuleValidator(Validator):
+    name = 'test_rule'
 
 
 class Required(Validator):
@@ -1053,3 +1069,32 @@ class FileTestCase(TestCase):
             content_type='image/jpeg'
         )
         return file
+
+
+class CustomRuleTestCase(TestCase):
+    def setUp(self):
+        self.extra_rules = {
+            TestRule.get_name(): TestRule
+        }
+        self.validator = TestRuleValidator
+        self.message = {
+            'name': {
+                'test_rule': 'test custom rule failed'
+            }
+        }
+        self.valid_data = {
+            'name': 'test',
+        }
+        self.invalid_data = {
+            'name': 'toast'
+        }
+
+    def test_valid(self):
+        validator = self.validator(extra_rules=self.extra_rules, data=self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(extra_rules=self.extra_rules, data=self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
