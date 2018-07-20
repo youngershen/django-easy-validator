@@ -720,16 +720,6 @@ class DatetimeAfterEqual(BaseRule):
         return datetime.datetime.strptime(datetime_str, self.param_format_str)
 
 
-class Bail(BaseRule):
-    def check_value(self):
-        pass
-
-    def check_null(self):
-        pass
-
-    # Stop running validation rules after the first validation failure.
-
-
 class Between(BaseRule):
     name = 'between'
     message = _('{VALUE} is not between of the {START} -> {END}')
@@ -737,7 +727,16 @@ class Between(BaseRule):
 
     def check_value(self):
         start, stop = self._get_params()
-        self.status = start <= int(self.field_value) <= stop
+        length = self.get_value_length()
+        self.status = start <= length <= stop
+
+    def get_value_length(self):
+        try:
+            length = int(self.field_value)
+        except ValueError:
+            length = len(self.field_value)
+
+        return length
 
     def check_null(self):
         pass
@@ -757,27 +756,13 @@ class Between(BaseRule):
 
 
 class Boolean(BaseRule):
+    name = 'boolean'
+    message = _('{VALUE} can not covert to boolean type')
+    description = _('check the given value if boolean type')
+    type_ = ['0', '1', 'true', 'false']
 
     def check_value(self):
-        pass
-
-    def check_null(self):
-        pass
-
-
-class Confirmed(BaseRule):
-
-    def check_value(self):
-        pass
-
-    def check_null(self):
-        pass
-
-
-class DigitsBetween(BaseRule):
-
-    def check_value(self):
-        pass
+        self.status = True if self.field_value.strip().lower() in self.type_ else False
 
     def check_null(self):
         pass
@@ -1063,5 +1048,6 @@ default_rules = {
     DateAfterEqual.get_name(): DateAfterEqual,
     DateTimeBeforeEqual.get_name(): DateTimeBeforeEqual,
     DatetimeAfterEqual.get_name(): DatetimeAfterEqual,
-    Between.get_name(): Between
+    Between.get_name(): Between,
+    Boolean.get_name(): Boolean
 }
