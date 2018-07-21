@@ -196,6 +196,15 @@ the field with datetime_before must be a datetime string can strap to a datetime
 
 the field with datetime_after must be a datetime string can strap to a datetime object and so as the parameter.
 
+
+### datetime_range
+
+```python
+    class LoginValidator(Validator):
+        period = 'datetime_range:2017-12-12 13:14:00, 2017-12-15 13:14:00'
+
+```
+
 ### active_url
 
 ```python
@@ -242,6 +251,132 @@ rule will match the field value with the paramter pattern out.
 ```
 
 the field with email must be a valid email address string.
+
+
+### min_length
+
+```python
+
+class Register(Validator):
+    password = 'min_length:8'
+
+```
+
+the field with **min_length** must has the minimal length of string or value of number.
+
+### max_length
+
+```python
+
+class RegisterValidator(Validator):
+    username = 'max_length:20'
+
+```
+
+the field with **min_length** must has the minimal length of string or value of number.
+
+
+### ids
+
+```python
+
+class DeleteValidator(Validator):
+    ids = 'ids'
+```
+
+the field with ids must be a integer string splited by the comma, such as '1,2,3,4,5'
+
+
+### cellphone
+
+```python
+
+class RegisterValidator(Validator):
+    phone = 'cellphone'
+
+```
+
+the field with cellphone rule must be a real cellphone number , it could be '+8613811754531' or just '13811754531'
+
+
+### alphabet
+
+```python
+
+class RegisterValidator(Validator):
+    name = 'alphabet'
+
+```
+
+the field with alphabet must be a standard alphabet string.
+
+
+### switch
+
+```python
+
+class LoginValidator(Validator):
+    rememberme ='switch:yes,no'
+
+```
+
+the field with switch must be in the params array, it this case , rememberme must be yes or no.
+
+
+### unique
+
+```python
+
+class RegisterValidator(Validator):
+    username = 'unique:AUTH_USER_MODEL,username'
+    email = 'unique:account.User,email'
+
+```
+
+the field with unique must has 2 parameters , the first is appname.modelname, the second is the field to check,
+actually it is also the column to check if is already exists in this table, if you want to validate the django auth
+user, the first paramater must be AUTH_USER_MODEL.
+
+
+### size
+```python
+
+class UpdateProfileValidator(Validator)
+    avatar = 'image|size:2048'
+
+```
+
+the field with size has 4 kind of types , if the given field is an file, the parameter means the size of the file with KB,
+if the field is a string , the parameter means the size is the string length, if the field is an integer , the size means
+the integer value, if the field is an array, the size means the array size.
+
+
+### min
+
+```python
+
+class UpdateProfileValidator(Validator):
+    profile = 'image|min:2048'
+
+```
+
+the field with min has the same meaning of size, it's just check the minimal of the field , the size is check the equal of the field.
+
+### max
+
+```python
+
+class UpdateProfileValidator(Validator):
+    profile = 'image|min:2048'
+
+```
+
+the field with min has the same meaning of size, it's just check the maximal of the field , the size is check the equal of the field.
+
+
+### file
+
+
 
 ## Advanced Topic
 

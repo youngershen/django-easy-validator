@@ -1026,7 +1026,6 @@ default_rules = {
     Digits.get_name(): Digits,
     Regex.get_name(): Regex,
     Email.get_name(): Email,
-
     MinLength.get_name(): MinLength,
     MaxLength.get_name(): MaxLength,
     IDS.get_name(): IDS,
@@ -1043,7 +1042,6 @@ default_rules = {
     Audio.get_name(): Audio,
     Attachement.get_name(): Attachement,
     AlphaDash.get_name(): AlphaDash,
-
     AlphaNumber.get_name(): AlphaNumber,
     Array.get_name(): Array,
     DateBeforeEqual.get_name(): DateBeforeEqual,
