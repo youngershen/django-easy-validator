@@ -16,6 +16,8 @@ you can use this software to validate your POST/GET data easily and softly.
 - Python 3.4
 - Python 3.5
 - Python 3.6
+- Python 3.7
+- Django 1.6 +
 
 ## Installation
 
@@ -376,6 +378,40 @@ the field with min has the same meaning of size, it's just check the maximal of 
 
 ### file
 
+```python
+
+class UploadValidator(Validator):
+    file = 'file:png,jpeg,zip,rar'
+
+```
+
+the field with file rule is to check the file type. parameters needed to be a string array.
+
+
+### image
+
+```python
+
+class UploadValidator(Validator):
+    file = 'image'
+
+```
+
+the field with file image rule just do the same thing like file , it is a convenient way to check the common image type , in this way you do not need to add image ext parameter.
+the check type is ['png', 'jpeg', 'gif', 'jpg', 'svg'] .
+
+
+### video
+
+```python
+
+class UploadValidator(Validator):
+    file = 'video'
+
+```
+
+the field with file video rule just do the same thing like file , it is a convenient way to check the common video type , in this way you do not need to add video ext parameter.
+the check type is  ['mp4', 'avi', 'mkv', 'flv', 'rmvb'].
 
 
 ## Advanced Topic

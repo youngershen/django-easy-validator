@@ -809,22 +809,22 @@ class File(FileRuleMixin, BaseRule):
 
 class Image(File):
     name = 'image'
-    exts = ['png', 'jpeg', 'gif']
+    exts = ['png', 'jpeg', 'gif', 'jpg', 'svg']
 
 
 class Video(File):
     name = 'video'
-    exts = ['mp4', 'avi', 'mkv']
+    exts = ['mp4', 'avi', 'mkv', 'flv', 'rmvb']
 
 
 class Audio(File):
     name = 'audio'
-    exts = ['mp3', 'wma', 'flac', 'ape']
+    exts = ['mp3', 'wma', 'flac', 'ape', 'ogg']
 
 
 class Attachement(File):
     name = 'attachement'
-    exts = ['doc', 'zip', 'ppt', 'docx', 'excel']
+    exts = ['doc', 'zip', 'ppt', 'docx', 'excel', 'rar']
 
 
 class SizeMixin:
