@@ -410,9 +410,43 @@ class UploadValidator(Validator):
 
 ```
 
-the field with file video rule just do the same thing like file , it is a convenient way to check the common video type , in this way you do not need to add video ext parameter.
+the field with video rule just do the same thing like file , it is a convenient way to check the common video type , in this way you do not need to add video ext parameter.
 the check type is  ['mp4', 'avi', 'mkv', 'flv', 'rmvb'].
 
+
+### audio
+
+```python
+
+class UploadValidator(Validator):
+    file = 'audio'
+
+```
+
+the field with audio rule just do the same thing like file , it is a convenient way to check the common audio type , in this way you do not need to add video ext parameter.
+the check type is  ['mp3', 'wma', 'flac', 'ape', 'ogg'].
+
+
+### attachement
+
+```python
+
+class UploadValidator(Validator):
+    file = 'attachement'
+```
+
+the field with attachement rule just do the same thing like file , it is a convenient way to check the common attachement type , in this way you do not need to add video ext parameter.
+the check type is ['doc', 'zip', 'ppt', 'docx', 'excel', 'rar'].
+
+### alpha_dash
+
+```python
+class RegisterValidator(Validator):
+    username = 'alpha_dash'
+
+```
+
+the field with alpha_dash rule is just check out if the string only includes alphabet characters and dash character.
 
 ## Advanced Topic
 
