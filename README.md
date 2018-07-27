@@ -448,6 +448,63 @@ class RegisterValidator(Validator):
 
 the field with alpha_dash rule is just check out if the string only includes alphabet characters and dash character.
 
+
+### alpha_number
+
+```python
+class RegisterValidator(Validator):
+    username = 'alpha_number'
+
+```
+the field with alpha_number the given value must conbines with only alphabets and numbers.
+
+
+### array
+
+```python
+class RegisterValidator(Validator):
+    hobbies = 'array'
+
+```
+
+the field with array must be a array string ,such as 'guitar, computer, music, food'.
+
+### date_before_equal
+
+```python
+class RegisterValidator(Validator):
+    due_at = 'date_before_equal:2018-01-08'
+```
+
+the field with date_before_equal just check the given value must be a date string and before or equal the given parameter.
+
+### date_after_equal
+
+```python
+class RegisterValidator(Validator):
+    due_at = 'date_after_equal:2018-01-08'
+```
+
+the field with date_after_equal just check the given value must be a date string and afer or equal the given parameter.
+
+### datetime_before_equal
+
+```python
+class RegisterValidator(Validator):
+    due_at='datetime_before_equal:1990-12-12 06:08:26'
+```
+
+the field with datetime_before_equal just check the given value must be a datetime string and befor the given parameter.
+
+### datetime_after_equal
+
+```python
+class RegisterValidator(Validator):
+    due_at='datetime_after_equal:1990-12-12 06:08:26'
+```
+
+the field with datetime_after_equal just check the given value must be a datetime string and after the given parameter.
+
 ## Advanced Topic
 
 advanced topic

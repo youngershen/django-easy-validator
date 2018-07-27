@@ -575,7 +575,7 @@ class AlphaNumber(BaseRule):
     name = 'alpha_number'
     message = _('{VALUE} is not a alpha-number string.')
     regex = '[a-zA-Z0-9]+'
-    description = _('the given value must conbines with only alpha ')
+    description = _('the given value must conbines with only alphabets and numbers ')
 
     def check_value(self):
         self.status = re.match(self.regex, self.field_value)
