@@ -1,7 +1,4 @@
 from setuptools import setup, find_packages
-from os import path
-
-here = path.abspath(path.dirsname(__file__))
 
 setup(
     name='django-easy-validator',
