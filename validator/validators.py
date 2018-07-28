@@ -743,6 +743,7 @@ class Between(BaseRule):
 
     def get_message(self):
         start, stop = self._get_params()
+        start, stop = stop, start if start > stop else None
         return self.message.format(VALUE=self.field_value, START=start, STOP=stop)
 
     def _get_params(self):

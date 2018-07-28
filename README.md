@@ -505,7 +505,57 @@ class RegisterValidator(Validator):
 
 the field with datetime_after_equal just check the given value must be a datetime string and after the given parameter.
 
+
+### between
+
+```python
+class RegisterValidator(Validator):
+    age = 'between:10, 15'
+```
+
+the field with between requires the given field value must be a integer number and it's value must between the parameters.
+
+
+### boolean
+
+```python
+class RegisterValidator(Valiadtor):
+    remember = 'boolean'
+
+```
+
+the field with boolean requires the given value should be one of this '['0', '1', 'true', 'false']'
+
 ## Advanced Topic
 
-advanced topic
+### Custom Validation Rules
 
+```python
+# define the rule
+from validator import BaseRule
+class TestRule(BaseRule):
+    name = 'test_rule'
+    message = 'test custom rule failed'
+    description = 'just for custom rule test'
+
+    def check_value(self):
+        self.status = True if self.field_value == 'test' else False
+
+    def check_null(self):
+        pass
+
+
+# define a validator to use the rule
+class TestRuleValidator(Validator):
+    name = 'test_rule'
+
+# to run the validation
+extra_rules = { TestRule.get_name(): TestRule }
+validator = TestRuleValidator(extra_rules=extra_rules, data={'name': 'test'})
+assert validator.validate()
+
+```
+
+custom a validation rule is very easy, you just import the BaseRule and implements the method ,
+the most important thing is before you use your rule , you should pass it to your validator 
+class when it init through the extra_rules parameter.
