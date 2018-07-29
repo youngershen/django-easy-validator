@@ -314,6 +314,16 @@ class File(Validator):
         }
     }
 
+
+class AlphaDash(Validator):
+    username = 'alpha_dash'
+
+    message = {
+        'username': {
+            'alpha_dash': 'username should only includes alphabet and dash characters.'
+        }
+    }
+
 # =====================================================================
 
 
@@ -1060,6 +1070,32 @@ class MinTestCase(TestCase):
         self.message = {
             'age': {
                 'min': 'sorry we do not support service to people who is under 15.'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class AlphaDashTestCase(TestCase):
+    def setUp(self):
+        self.validator = AlphaDash
+        self.valid_data = {
+            'username': 'abc_def'
+        }
+        self.invalid_data = {
+            'username': '#%#@'
+        }
+        self.message = {
+            'username': {
+                'alpha_dash': 'username should only includes alphabet and dash characters.'
             }
         }
 

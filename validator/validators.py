@@ -915,6 +915,33 @@ class Size(SizeMixin, BaseRule):
         self.status = _size == size
 
 
+class Username(BaseRule):
+    name = 'username'
+    message = _('the input is not a proper username.')
+    description = _('')
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class Password(BaseRule):
+    name = 'password'
+    message = _('the input is not a proper password.')
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
+
+
+class ASCII(BaseRule):
+    pass
+
+
 class MetaValidator(type):
     def __new__(mcs, *args, **kwargs):
         name, base, attrs = args
