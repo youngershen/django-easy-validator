@@ -286,6 +286,25 @@ class Size(Validator):
     }
 
 
+class Min(Validator):
+    age = 'min:number,15'
+
+    message = {
+        'age': {
+            'min': 'sorry we do not support service to people who is under 15.'
+        }
+    }
+
+
+class Max(Validator):
+    age = 'max:number,50'
+    message = {
+        'age': {
+            'max': 'sorry we do not support service to people who is older than 50.'
+        }
+    }
+
+
 class File(Validator):
     file = 'file:png,jpeg,zip,rar'
 
@@ -1026,6 +1045,59 @@ class SizeTestCase(TestCase):
     def get_temp_file(buffer):
         with open('tests/assets/linux.jpeg', mode='rb') as f:
             buffer.write(f.read())
+
+
+class MinTestCase(TestCase):
+    def setUp(self):
+        self.validator = Min
+        self.valid_data = {
+            'age': 20
+        }
+        self.invalid_data = {
+            'age': 10
+        }
+
+        self.message = {
+            'age': {
+                'min': 'sorry we do not support service to people who is under 15.'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class MaxTestCase(TestCase):
+    def setUp(self):
+        self.validator = Max
+        self.valid_data = {
+            'age': 15
+        }
+        self.invalid_data = {
+            'age': 55
+        }
+        self.message = {
+            'age': {
+                'max': 'sorry we do not support service to people who is older than 50.'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
 
 
 class FileTestCase(TestCase):
