@@ -918,10 +918,13 @@ class Size(SizeMixin, BaseRule):
 class Username(BaseRule):
     name = 'username'
     message = _('the input is not a proper username.')
-    description = _('')
+    description = _('this rule will check the normal username, the initial of username must be a alphabet character and'
+                    'it could conbimes with digits, dot, underscore and dash.')
+
+    regex = r'^[a-z]{1}[a-z0-9\.\-_]*$'
 
     def check_value(self):
-        pass
+        self.status = True if re.fullmatch(self.regex, self.field_value) else False
 
     def check_null(self):
         pass
@@ -937,9 +940,24 @@ class Password(BaseRule):
     def check_null(self):
         pass
 
+    def check_simple(self):
+        pass
+
+    def level_2(self):
+        pass
+
+    def level_3(self):
+        pass
+
 
 class ASCII(BaseRule):
-    pass
+    name = 'ascii'
+
+    def check_value(self):
+        pass
+
+    def check_null(self):
+        pass
 
 
 class MetaValidator(type):
@@ -1077,5 +1095,6 @@ default_rules = {
     DateTimeBeforeEqual.get_name(): DateTimeBeforeEqual,
     DatetimeAfterEqual.get_name(): DatetimeAfterEqual,
     Between.get_name(): Between,
-    Boolean.get_name(): Boolean
+    Boolean.get_name(): Boolean,
+    Username.get_name(): Username
 }
