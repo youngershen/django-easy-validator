@@ -324,6 +324,15 @@ class AlphaDash(Validator):
         }
     }
 
+
+class Username(Validator):
+    username = 'username'
+    message = {
+        'username': {
+            'username': 'the input {VALUE} is not a proper username.'
+        }
+    }
+
 # =====================================================================
 
 
@@ -1205,4 +1214,30 @@ class CustomRuleTestCase(TestCase):
         validator = self.validator(extra_rules=self.extra_rules, data=self.invalid_data)
         self.assertFalse(validator.validate())
         message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class UsernameTestCase(TestCase):
+    def setUp(self):
+        self.validator = Username
+        self.valid_data = {
+            'username': 'abc8848cba'
+        }
+        self.invalid_data = {
+            'username': '123ABCdef'
+        }
+        self.message = {
+            'username': {
+                'username': 'the input 123ABCdef is not a proper username.'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        valiadtor = self.validator(self.invalid_data)
+        self.assertFalse(valiadtor.validate())
+        message = valiadtor.get_message()
         self.assertDictEqual(message, self.message)

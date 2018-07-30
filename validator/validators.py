@@ -917,7 +917,7 @@ class Size(SizeMixin, BaseRule):
 
 class Username(BaseRule):
     name = 'username'
-    message = _('the input is not a proper username.')
+    message = _('the input {VALUE} is not a proper username.')
     description = _('this rule will check the normal username, the initial of username must be a alphabet character and'
                     'it could conbimes with digits, dot, underscore and dash.')
 
