@@ -333,6 +333,33 @@ class Username(Validator):
         }
     }
 
+
+class PasswordLow(Validator):
+    password = 'password:low'
+    message = {
+        'password': {
+            'password': 'the input is not a proper password.'
+        }
+    }
+
+
+class PasswordMiddle(Validator):
+    password = 'password:middle'
+    message = {
+        'password': {
+            'password': 'the input is not a proper password.'
+        }
+    }
+
+
+class PasswordHigh(Validator):
+    password = 'password:high'
+    message = {
+        'password': {
+            'password': 'the input is not a proper password.'
+        }
+    }
+
 # =====================================================================
 
 
@@ -1241,3 +1268,50 @@ class UsernameTestCase(TestCase):
         self.assertFalse(valiadtor.validate())
         message = valiadtor.get_message()
         self.assertDictEqual(message, self.message)
+
+
+class PasswordTestCase(TestCase):
+    def setUp(self):
+        self.validator1 = PasswordLow
+        self.validator2 = PasswordMiddle
+        self.validator3 = PasswordHigh
+
+        self.valid_data1 = {
+            'password': '1234567设定'
+        }
+        self.valid_data2 = {
+            'password': 'abcDEF123'
+        }
+        self.valid_data3 = {
+            'password': 'ABCdef123!@#'
+        }
+        self.invalid_data1 = {
+            'password': '123'
+        }
+        self.invalid_data2 = {
+            'password': 'abcdef123'
+        }
+        self.invalid_data3 = {
+            'password': 'abcdef1234'
+        }
+
+    def test_low(self):
+        validator = self.validator1(self.valid_data1)
+        self.assertTrue(validator.validate())
+
+        validator = self.validator1(self.invalid_data1)
+        self.assertFalse(validator.validate())
+
+    def test_middle(self):
+        validator = self.validator2(self.valid_data2)
+        self.assertTrue(validator.validate())
+
+        validator = self.validator2(self.invalid_data2)
+        self.assertFalse(validator.validate())
+
+    def test_high(self):
+        validator = self.validator3(self.valid_data3)
+        self.assertTrue(validator.validate())
+
+        validator = self.validator3(self.invalid_data3)
+        self.assertFalse(validator.validate())

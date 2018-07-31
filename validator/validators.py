@@ -943,7 +943,7 @@ class Password(BaseRule):
                     'characters and lowe case chracters, and digits numbers.')
 
     digits = 48, 57
-    latin_upper = 65, 9
+    latin_upper = 65, 96
     latin_lower = 97, 122
     special = (33, 47), (58, 64), (123, 126)
 
@@ -951,7 +951,6 @@ class Password(BaseRule):
 
     def check_value(self):
         level = self.get_level()
-
         if 'low' == level:
             self.status = self.check_low()
         elif 'middle' == level:
@@ -970,13 +969,16 @@ class Password(BaseRule):
             return level
 
     def check_low(self):
-        return len(self.field_value) > 7
+        return len(self.field_value) >= 7
 
     def check_middle(self):
-        return len(self.field_value) > 7 and self.check_latin_lower() and self.check_latin_lower() and self.check_digits()
+        return len(self.field_value) >= 7 and \
+               self.check_latin_lower() and \
+               self.check_latin_upper() and \
+               self.check_digits()
 
     def check_high(self):
-        return len(self.field_value) > 7 and \
+        return len(self.field_value) >= 7 and \
                self.check_latin_lower() and \
                self.check_latin_lower() and \
                self.check_digits() and \
@@ -1170,5 +1172,6 @@ default_rules = {
     DatetimeAfterEqual.get_name(): DatetimeAfterEqual,
     Between.get_name(): Between,
     Boolean.get_name(): Boolean,
-    Username.get_name(): Username
+    Username.get_name(): Username,
+    Password.get_name(): Password
 }
