@@ -933,25 +933,99 @@ class Username(BaseRule):
 class Password(BaseRule):
     name = 'password'
     message = _('the input is not a proper password.')
+    description = _('a simple password validate rule , it has 3 level strength rule for password,'
+                    'the simple rule just needs the password length has more than 7 simple '
+                    'characters includes digits number and alphabet characters'
+                    'the middle rule needs the password has UPPER case characters , '
+                    'lower case characters, and digits numbers',
+                    'the high rule needs the password combines with special '
+                    'characters, and UPPER case'
+                    'characters and lowe case chracters, and digits numbers.')
+
+    digits = 48, 57
+    latin_upper = 65, 9
+    latin_lower = 97, 122
+    special = (33, 47), (58, 64), (123, 126)
+
+    level = ['low', 'middle', 'high']
 
     def check_value(self):
-        pass
+        level = self.get_level()
+
+        if 'low' == level:
+            self.status = self.check_low()
+        elif 'middle' == level:
+            self.status = self.check_middle()
+        elif 'high' == level:
+            self.status = self.check_high()
 
     def check_null(self):
         pass
 
-    def check_simple(self):
-        pass
+    def get_level(self):
+        level = self.args[0]
+        if level not in self.level:
+            raise InvalidRuleParamterError('parameters must be one of : low, middle, high')
+        else:
+            return level
 
-    def level_2(self):
-        pass
+    def check_low(self):
+        return len(self.field_value) > 7
 
-    def level_3(self):
-        pass
+    def check_middle(self):
+        return len(self.field_value) > 7 and self.check_latin_lower() and self.check_latin_lower() and self.check_digits()
+
+    def check_high(self):
+        return len(self.field_value) > 7 and \
+               self.check_latin_lower() and \
+               self.check_latin_lower() and \
+               self.check_digits() and \
+               self.check_special()
+
+    def check_digits(self, number=1):
+        seq = self.parse_value()
+        count = 0
+        for c in seq:
+            if self.digits[0] <= c <= self.digits[1]:
+                count = count + 1
+
+        return count >= number
+
+    def check_latin_lower(self, number=1):
+        seq = self.parse_value()
+        count = 0
+        for c in seq:
+            if self.latin_lower[0] <= c <= self.latin_lower[1]:
+                count = count + 1
+        return count >= number
+
+    def check_latin_upper(self, number=1):
+        seq = self.parse_value()
+        count = 0
+        for c in seq:
+            if self.latin_upper[0] <= c <= self.latin_upper[1]:
+                count = count + 1
+        return count >= number
+
+    def check_special(self, number=1):
+        seq = self.parse_value()
+        count = 0
+        for c in seq:
+            if self.special[0][0] <= c <= self.special[0][1] or \
+                    self.special[1][0] <= c <= self.special[1][1] or \
+                    self.special[2][0] <= c <= self.special[2][1]:
+                count = count + 1
+        return count >= number
+
+    def parse_value(self):
+        ret = map(lambda d: ord(d), ','.join(self.field_value).split(','))
+        return list(ret)
 
 
 class ASCII(BaseRule):
     name = 'ascii'
+    message = _('the input {VALUE} value is not a proper ASCII character.')
+    description = _('')
 
     def check_value(self):
         pass
