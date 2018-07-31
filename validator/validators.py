@@ -1027,13 +1027,17 @@ class Password(BaseRule):
 class ASCII(BaseRule):
     name = 'ascii'
     message = _('the input {VALUE} value is not a proper ASCII character.')
-    description = _('')
+    description = _('check the given value if is a ascii character series.')
 
     def check_value(self):
-        pass
+        self.status = self.check_ascii()
 
     def check_null(self):
         pass
+
+    def check_ascii(self):
+        seq = filter(lambda d: ord(d) > 127, ','.join(self.field_value).split(','))
+        return False if list(seq) else True
 
 
 class MetaValidator(type):
@@ -1173,5 +1177,6 @@ default_rules = {
     Between.get_name(): Between,
     Boolean.get_name(): Boolean,
     Username.get_name(): Username,
-    Password.get_name(): Password
+    Password.get_name(): Password,
+    ASCII.get_name(): ASCII
 }

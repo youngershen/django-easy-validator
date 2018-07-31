@@ -360,6 +360,10 @@ class PasswordHigh(Validator):
         }
     }
 
+
+class ASCII(Validator):
+    seq = 'ascii'
+
 # =====================================================================
 
 
@@ -1315,3 +1319,30 @@ class PasswordTestCase(TestCase):
 
         validator = self.validator3(self.invalid_data3)
         self.assertFalse(validator.validate())
+
+
+class ASCIITestCase(TestCase):
+    def setUp(self):
+        self.validator = ASCII
+        self.valid_data = {
+            'seq': 'abcdef123@#$'
+        }
+        self.invalid_data = {
+            'seq': '你好世界'
+        }
+
+        self.message = {
+            'seq': {
+                'ascii': 'the input 你好世界 value is not a proper ASCII character.'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
