@@ -11,6 +11,24 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from validator import Validator, BaseRule
 
 
+class Between(Validator):
+    age = 'between:10,20'
+    message = {
+        'age': {
+            'between': '{VALUE} is not between 10 to 20'
+        }
+    }
+
+
+class Boolean(Validator):
+    remember_me = 'boolean'
+    message = {
+        'remember_me': {
+            'boolean': '{VALUE} is not a boolean type value.'
+        }
+    }
+
+
 class TestRule(BaseRule):
     name = 'test_rule'
     message = 'test custom rule failed'
@@ -1334,6 +1352,60 @@ class ASCIITestCase(TestCase):
         self.message = {
             'seq': {
                 'ascii': 'the input 你好世界 value is not a proper ASCII character.'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class BooleanTestCase(TestCase):
+    def setUp(self):
+        self.validator = Boolean
+        self.valid_data = {
+            'remember_me': 'true'
+        }
+
+        self.invalid_data = {
+            'remember_me': 'haha'
+        }
+
+        self.message = {
+            'remember_me': {
+                'boolean': 'haha is not a boolean type value.'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class BetweenTestCase(TestCase):
+    def setUp(self):
+        self.validator = Between
+        self.valid_data = {
+            'age': 15
+        }
+        self.invalid_data = {
+            'age': 25
+        }
+        self.message = {
+            'age': {
+                'between': '25 is not between 10 to 20'
             }
         }
 

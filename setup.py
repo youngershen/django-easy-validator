@@ -52,7 +52,5 @@ setup(
     install_requires=[
         'Django',
     ],
-
     python_requires='>=3.6',
-
 )

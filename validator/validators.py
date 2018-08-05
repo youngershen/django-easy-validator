@@ -723,7 +723,7 @@ class DatetimeAfterEqual(BaseRule):
 class Between(BaseRule):
     name = 'between'
     message = _('{VALUE} is not between of the {START} -> {END}')
-    description = _('check the given value if between the params')
+    description = _('check the given value if between the params, it\'s only adapted for integer and string value')
 
     def check_value(self):
         start, stop = self._get_params()
