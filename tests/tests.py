@@ -11,6 +11,15 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from validator import Validator, BaseRule
 
 
+class Array(Validator):
+    ids = 'array'
+    message = {
+        'ids': {
+            'array': '{VALUE} is not a array type series.'
+        }
+    }
+
+
 class Between(Validator):
     age = 'between:10,20'
     message = {
@@ -1406,6 +1415,33 @@ class BetweenTestCase(TestCase):
         self.message = {
             'age': {
                 'between': '25 is not between 10 to 20'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class ArrayTestCase(TestCase):
+    def setUp(self):
+        self.validator = Array
+        self.valid_data = {
+            'ids': '1, 2, 3, 4'
+        }
+        self.invalid_data = {
+            'ids': 'abcdef'
+        }
+
+        self.message = {
+            'ids': {
+                'array': 'abcdef is not a array type series.'
             }
         }
 

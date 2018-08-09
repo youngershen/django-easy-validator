@@ -590,7 +590,7 @@ class Array(BaseRule):
     description = _('the given must be a comma splited string.')
 
     def check_value(self):
-        self.status = True if self.field_value.split(',') else False
+        self.status = True if len(self.field_value.split(',')) > 2 else False
 
     def check_null(self):
         pass
