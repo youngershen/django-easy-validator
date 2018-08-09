@@ -11,6 +11,15 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from validator import Validator, BaseRule
 
 
+class AlphaNumber(Validator):
+    code = 'alpha_number'
+
+    message = {
+        'code': {
+            'alpha_number': '{VALUE} is not a alpha number type series.'
+        }
+    }
+
 class Array(Validator):
     ids = 'array'
     message = {
@@ -1442,6 +1451,32 @@ class ArrayTestCase(TestCase):
         self.message = {
             'ids': {
                 'array': 'abcdef is not a array type series.'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+
+class AlphaNumberTest(TestCase):
+    def setUp(self):
+        self.validator = AlphaNumber
+        self.valid_data = {
+            'code': 'abc123'
+        }
+        self.invalid_data = {
+            'code': '密码'
+        }
+        self.message = {
+            'code': {
+                'alpha_number': '密码 is not a alpha number type series.'
             }
         }
 
