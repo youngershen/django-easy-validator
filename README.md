@@ -106,6 +106,9 @@ install from source code:
 - [datetime_after_equal](#datetime_after_equal)
 - [between](#between)
 - [boolean](#boolean)
+- [username](#username)
+- [password](#password)
+- [ASCII](#ASCII)
 
 --------------------------------------------------------------
 
@@ -525,6 +528,43 @@ class RegisterValidator(Valiadtor):
 ```
 
 the field with boolean requires the given value should be one of this '['0', '1', 'true', 'false']'
+
+### username
+
+```python
+class RegisterValidator(Validator):
+    username = 'username'
+```
+
+the field with username requires the given value starts with an alphabet character and it could includes with numbers , dash, underscore.
+
+### password
+```python
+class RegisterValidator(Validator):    
+    password = 'password:low'
+
+```
+
+the field with password ruls requires an parameter , it could be : low, middle , high. 
+the 3 different check methods has different check level.
+
+the low method means the password length must longer than 7
+
+the middle method means the password length must longer than 7 and it sould contains lower , upper latin characters and digits
+
+the high method means the password lenght must longer than 7 and it sould contains lower , upper latin characters and digits, and special
+
+characters.
+
+### ASCII
+```python
+class ASCIIValidator(Validator):
+    ascii = 'ascii'
+
+```
+
+the ascii requires the given value only includes ascii characters.
+
 
 ## Advanced Topic
 
