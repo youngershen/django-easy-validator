@@ -35,11 +35,11 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
 
-        'Framework :: Django :: 1.6'
-        'Framework :: Django :: 1.7'
-        'Framework :: Django :: 1.8'
-        'Framework :: Django :: 1.9'
-        'Framework :: Django :: 2.0'
+        'Framework :: Django :: 1.6',
+        'Framework :: Django :: 1.7',
+        'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.9',
+        'Framework :: Django :: 2.0',
     ],
 
     # What does your project relate to?
