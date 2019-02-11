@@ -566,6 +566,17 @@ class ASCIIValidator(Validator):
 the ascii requires the given value only includes ascii characters.
 
 
+### same
+
+```python
+class SameValidator(Validator):
+    password = 'required|min_lengh:8'
+    password_confirm = 'same:password'
+
+```
+
+the same rule just validate the give field vale checks the value if is same as the other value.
+
 ## Advanced Topic
 
 ### Custom Validation Rules
