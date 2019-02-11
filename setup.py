@@ -1,11 +1,20 @@
+import os
 from setuptools import setup, find_packages
+
+
+def read(fname):
+    with open(os.path.join(os.path.dirname(__file__), fname)) as f:
+        return f.read()
+
 
 setup(
     name='django-easy-validator',
 
-    version='1.2',
+    version='1.2.1',
 
     description='a very easy use django request POST/GET data validator',
+
+    long_description=read('README.md'),
 
     url='https://github.com/youngershen/django-easy-validator',
 
