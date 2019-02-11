@@ -1,10 +1,11 @@
 # PROJECT : django-easy-validator
 # TIME    : 18-1-2 上午9:44
-# AUTHOR  : 申延刚 <Younger Shen>
-# EMAIL   : younger.shen@hotmail.com
-# PHONE   : 13811754531
-# WECHAT  : 13811754531
-# WEBSITE : www.punkcoder.cn
+# AUTHOR : Younger Shen
+# EMAIL : younger.x.shen@gmail.com
+# CELL : 13811754531
+# WECHAT : 13811754531
+# WEB : https://youngershen.com
+
 from io import BytesIO
 from django.test import TestCase
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -19,6 +20,7 @@ class AlphaNumber(Validator):
             'alpha_number': '{VALUE} is not a alpha number type series.'
         }
     }
+
 
 class Array(Validator):
     ids = 'array'
@@ -399,6 +401,12 @@ class PasswordHigh(Validator):
 
 class ASCII(Validator):
     seq = 'ascii'
+
+
+class Same(Validator):
+    password = 'required'
+    password_confirm = 'required|same:password'
+
 
 # =====================================================================
 
@@ -1489,3 +1497,22 @@ class AlphaNumberTest(TestCase):
         self.assertFalse(validator.validate())
         message = validator.get_message()
         self.assertDictEqual(message, self.message)
+
+
+class SameTestCase(TestCase):
+    def setUp(self):
+        self.validator = Same
+        self.valid_data = {
+            'password': 'abcd1234',
+            'password_confirm': 'abcd1234'
+        }
+
+        self.invalid_data = {
+            'password': 'abcd',
+            'password_confirm': '1234'
+        }
+
+    def teste_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='django-easy-validator',
 
-    version='1.1',
+    version='1.2',
 
     description='a very easy use django request POST/GET data validator',
 

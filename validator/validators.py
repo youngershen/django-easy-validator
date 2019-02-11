@@ -1,10 +1,10 @@
 # PROJECT : django-easy-validator
 # TIME    : 18-1-2 上午9:44
-# AUTHOR  : 申延刚 <Younger Shen>
-# EMAIL   : younger.shen@hotmail.com
-# PHONE   : 13811754531
-# WECHAT  : 13811754531
-# WEBSITE : www.punkcoder.cn
+# AUTHOR : Younger Shen
+# EMAIL : younger.x.shen@gmail.com
+# CELL : 13811754531
+# WECHAT : 13811754531
+# WEB : https://youngershen.com
 
 import re
 import socket
@@ -41,12 +41,13 @@ class BaseRule:
     description = _('describe the propuse of the current rule.')
     parse_args = True
 
-    def __init__(self, field_name, field_value, args, message=None):
+    def __init__(self, field_name, field_value, args, data=None, message=None):
         self.field_name = field_name
         self.field_value = field_value
         self.args = list(map(lambda d: d.strip(), args.split(','))) if self.parse_args else args
         self.status = True
         self.message = message if message else self.message
+        self.data = data
 
     def check(self):
         self.check_value() if self.field_value else self.check_null()
@@ -1040,6 +1041,33 @@ class ASCII(BaseRule):
         return False if list(seq) else True
 
 
+class Same(BaseRule):
+    name = 'same'
+    message = _('the input value is not same as the value of {PARAM_FIELD}')
+    description = _('')
+
+    def check(self):
+        name = self.get_arg(0)
+        if name:
+            value = self.data.get(name, None)
+            return str(value) == str(self.field_value)
+        else:
+            raise InvalidRuleParamterError(_('wrong paramter for the Same Rule.'))
+
+    def check_null(self):
+        self.status = self.check()
+
+    def check_value(self):
+        self.status = self.check()
+
+    def get_message(self):
+        return self.message.format(FIELD=self.field_name,
+                                   VALUE=self.field_value,
+                                   RULE_NAME=self.name,
+                                   PARAM_FIELD=self.get_arg(0),
+                                   PARAM_VALUE=self.data.get(self.get_arg(0), None))
+
+
 class MetaValidator(type):
     def __new__(mcs, *args, **kwargs):
         name, base, attrs = args
@@ -1097,7 +1125,7 @@ class Validator(metaclass=MetaValidator):
         params = rule_info.get('params')
         rule_class = self._get_origin_rule(rule_name)
         message = getattr(self, 'message', {}).get(name, {}).get(rule_name, None)
-        instance = rule_class(name, value, params, message=message)
+        instance = rule_class(name, value, params, data=self.data, message=message)
         return instance
 
     def _get_origin_rule(self, name):
@@ -1178,5 +1206,6 @@ default_rules = {
     Boolean.get_name(): Boolean,
     Username.get_name(): Username,
     Password.get_name(): Password,
-    ASCII.get_name(): ASCII
+    ASCII.get_name(): ASCII,
+    Same.get_name(): Same
 }
