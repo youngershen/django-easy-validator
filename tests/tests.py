@@ -4,7 +4,7 @@
 # EMAIL : younger.x.shen@gmail.com
 # CELL : 13811754531
 # WECHAT : 13811754531
-# WEB : https://youngershen.com
+# https://github.com/youngershen/
 
 from io import BytesIO
 from django.test import TestCase
