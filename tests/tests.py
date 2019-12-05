@@ -6,6 +6,7 @@
 # WECHAT : 13811754531
 # WEB : https://youngershen.com
 
+
 from io import BytesIO
 from django.test import TestCase
 from django.core.files.uploadedfile import InMemoryUploadedFile

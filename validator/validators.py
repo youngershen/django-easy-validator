@@ -6,6 +6,7 @@
 # WECHAT : 13811754531
 # WEB : https://youngershen.com
 
+
 import re
 import socket
 import datetime
@@ -938,7 +939,7 @@ class Password(BaseRule):
                     'the simple rule just needs the password length has more than 7 simple '
                     'characters includes digits number and alphabet characters'
                     'the middle rule needs the password has UPPER case characters , '
-                    'lower case characters, and digits numbers',
+                    'lower case characters, and digits numbers'
                     'the high rule needs the password combines with special '
                     'characters, and UPPER case'
                     'characters and lowe case chracters, and digits numbers.')
