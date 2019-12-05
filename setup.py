@@ -16,6 +16,8 @@ setup(
 
     long_description=read('README.md'),
 
+    long_description_content_type="text/markdown",
+
     url='https://github.com/youngershen/django-easy-validator',
 
     # Author details
