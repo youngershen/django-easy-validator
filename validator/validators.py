@@ -211,7 +211,7 @@ class Digits(BaseRule):
 
     def check_value(self):
         digits_regex = r'[0-9]+'
-        self.status = True if re.match(digits_regex, str(self.field_value)) else False
+        self.status = True if re.fullmatch(digits_regex, str(self.field_value)) else False
 
 
 class Numberic(BaseRule):
@@ -223,9 +223,8 @@ class Numberic(BaseRule):
         pass
 
     def check_value(self):
-        int(str(self.field_value))
         regex = r'^[1-9]{1}[0-9]*'
-        self.status = True if re.match(regex, str(self.field_value)) else False
+        self.status = True if re.fullmatch(regex, str(self.field_value)) else False
 
 
 class ActiveURL(BaseRule):

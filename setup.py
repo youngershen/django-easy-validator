@@ -18,7 +18,7 @@ def read(fname):
 setup(
     name='django-easy-validator',
 
-    version='1.2.2',
+    version='1.2.3',
 
     description='a very easy use django request POST/GET data validator',
 
@@ -30,7 +30,8 @@ setup(
 
     # Author details
     author='Younger Shen',
-    author_email='younger.x.shen@gmail.com',
+    author_email='shenyangang@163.com',
+    author_qq='89198011',
 
     # Choose your license
     license='MIT',
