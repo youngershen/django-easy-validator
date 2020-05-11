@@ -143,14 +143,13 @@ class IDS(BaseRule):
     name = 'ids'
     message = _('{VALUE} of {FIELD} is not a id series')
     description = _('check it the given value is id string such as 1,2,3,4')
-    regex = r'^([0-9]+,)+[0-9]+$'
+    regex = r'^\d+(?:,\d+)*$'
 
     def check_null(self):
         pass
 
     def check_value(self):
         self.status = True if re.match(self.regex, self.field_value) else False
-
 
 class Cellphone(BaseRule):
     name = 'cellphone'
