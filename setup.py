@@ -18,7 +18,7 @@ def read(fname):
 setup(
     name='django-easy-validator',
 
-    version='1.2.4',
+    version='1.2.5',
 
     description='a very easy use django request POST/GET data validator',
 

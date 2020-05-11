@@ -1048,7 +1048,7 @@ class Same(BaseRule):
         name = self.get_arg(0)
         if name:
             value = self.data.get(name, None)
-            return str(value) == str(self.field_value)
+            self.status =  str(value) == str(self.field_value)
         else:
             raise InvalidRuleParamterError(_('wrong paramter for the Same Rule.'))
 
