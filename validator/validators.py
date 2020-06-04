@@ -12,12 +12,6 @@ import datetime
 from copy import deepcopy
 from django.utils.translation import ugettext_lazy as _
 
-# TODO : add check multi field feature to the validator
-
-# TODO : full document support
-
-# TODO: add rule to check unique against model
-
 
 class RuleNotFoundError(Exception):
     message = _('{NAME} rule not found !!!')
