@@ -18,8 +18,6 @@ from django.utils.translation import ugettext_lazy as _
 
 # TODO: add rule to check unique against model
 
-# TODO: add exist to check if the record exist in database
-
 
 class RuleNotFoundError(Exception):
     message = _('{NAME} rule not found !!!')
@@ -1110,14 +1108,21 @@ class Exist(Unique):
 
 class UniqueAgainst(Unique):
     name = 'unique_against'
-    message = _('')
-    description = _('')
+    message = _('the given {MODEL_NAME} record is exist against '
+                'the {MODEL_FIELD} column by {MODEL_VALUE} with value {VALUE}')
+    description = _('check the given record weather exists in the database against the given column value')
 
-    def check_module(self):
-        model_name, model_field = self.args
+    def check_model(self):
+        model_name, model_field, model_value = self.args
         model = self.get_model(model_name)
-        qs = model.objects.filter(**{model_field: self.field_value})
-        return qs.exists()
+        qs = model.objects.filter(**{model_field: self.field_value}).exclude(**{model_field: model_value})
+        return not qs.exists()
+
+    def get_message(self):
+        return self.message.format(MODEL_NAME=self.args[0],
+                                   MODEL_FIELD=self.args[1],
+                                   MODEL_VALUE=self.args[2],
+                                   VALUE=self.field_value)
 
 
 class MetaValidator(type):
@@ -1261,5 +1266,6 @@ default_rules = {
     ASCII.get_name(): ASCII,
     Same.get_name(): Same,
     Decimal.get_name(): Decimal,
-    Exist.get_name(): Exist
+    Exist.get_name(): Exist,
+    UniqueAgainst.get_name(): UniqueAgainst
 }

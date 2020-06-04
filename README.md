@@ -109,9 +109,10 @@ install from source code:
 - [username](#username)
 - [password](#password)
 - [ASCII](#ASCII)
-- [same](#Same)
-- [decimal](#Decimal)
-- [exist](#Exist)
+- [same](#same)
+- [decimal](#decimal)
+- [exist](#exist)
+- [unique_against](unique_against)
 
 --------------------------------------------------------------
 
@@ -580,7 +581,7 @@ class SameValidator(Validator):
 
 the same rule just validate the give field vale checks the value if is same as the other value.
 
-### Deciaml
+### deciaml
 ```python
 
 class DecimalValidator(Validator):
@@ -590,7 +591,7 @@ class DecimalValidator(Validator):
 
 the decimal rule just validate the give field value if is a decimal or a float number or number string.
 
-### Exist
+### exist
 ```python
 class ExistValidator(Validator):
     username = 'required|exist:AUTH_USER_MODEL,username'
@@ -598,6 +599,13 @@ class ExistValidator(Validator):
 
 the exist rule just check the given field record weather exists in the database table.
 
+### unique_against
+```python
+class UniqueAgainstValidator(Validator):
+    username = 'required|unique_against:AUTH_USER_MODEL, username, youngershen'
+```
+
+the unique_against validator check weather the given value column exists in the database and against the third parameter.
 
 ## Advanced Topic
 

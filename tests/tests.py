@@ -415,6 +415,10 @@ class Decimal(Validator):
 class Exist(Validator):
     username = 'required|exist:AUTH_USER_MODEL,username'
 
+
+class UniqueAgainst(Validator):
+    username = 'required|unique_against:AUTH_USER_MODEL, username, youngershen'
+
 # ======================================================================================================================
 
 
@@ -1564,5 +1568,35 @@ class ExistTestCase(TestCase):
     def setup_users():
         from django.contrib.auth.models import User
         User.objects.create_user(username='youngershen',
+                                 email='shenyangang@163.com',
+                                 password='123456789')
+
+
+class UniqueAgainstTestCase(TestCase):
+    def setUp(self):
+        self.setup_users()
+        self.validator = UniqueAgainst
+        self.valid_data = {
+            'username': 'youngershen'
+        }
+        self.invalid_data = {
+            'username': 'bear'
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+
+    @staticmethod
+    def setup_users():
+        from django.contrib.auth.models import User
+        User.objects.create_user(username='youngershen',
+                                 email='shenyangang@163.com',
+                                 password='123456789')
+
+        User.objects.create_user(username='bear',
                                  email='shenyangang@163.com',
                                  password='123456789')
