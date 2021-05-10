@@ -419,6 +419,16 @@ class Exist(Validator):
 class UniqueAgainst(Validator):
     username = 'required|unique_against:AUTH_USER_MODEL, username, youngershen'
 
+
+class PrintableASCII(Validator):
+    username = 'pascii:true'
+
+    message = {
+        'username': {
+            'pascii': '用户名不能为空'
+        }
+    }
+
 # ======================================================================================================================
 
 
@@ -1380,7 +1390,7 @@ class ASCIITestCase(TestCase):
     def setUp(self):
         self.validator = ASCII
         self.valid_data = {
-            'seq': 'abcdef123@#$'
+            'seq': 'a   '
         }
         self.invalid_data = {
             'seq': '你好世界'
@@ -1600,3 +1610,29 @@ class UniqueAgainstTestCase(TestCase):
         User.objects.create_user(username='bear',
                                  email='shenyangang@163.com',
                                  password='123456789')
+
+
+class PrintableASCIITestCase(TestCase):
+    def setUp(self):
+        self.validator = PrintableASCII
+        self.valid_data = {
+            'username': 'abcde@123'
+        }
+        self.invalid_data = {
+            'username': ' younger shen '
+        }
+        self.message = {
+            'username': {
+                'pascii': '用户名不能为空'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)

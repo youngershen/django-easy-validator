@@ -10,7 +10,7 @@ import re
 import socket
 import datetime
 from copy import deepcopy
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class RuleNotFoundError(Exception):
@@ -482,6 +482,7 @@ class DatetimeAfter(BaseRule):
         return datetime.datetime.strptime(datetime_str, self.param_format_str)
 
 
+# FIX: thie required should filter the space in the given value
 class Required(BaseRule):
     name = 'required'
     message = _('{FIELD} field is required')
@@ -1036,6 +1037,45 @@ class ASCII(BaseRule):
         return False if list(seq) else True
 
 
+class PrintableASCII(BaseRule):
+    name = 'pascii'
+    message = _('this input {VALUE} is not a proper printable ASCII character string.')
+    description = _('check the give string if it is a printable ASCII string only'
+                    'contains the characters from 32 to 255')
+
+    def check_value(self):
+        no_blank = self.get_arg(0)
+        if no_blank:
+            self.status = self.check_string_no_blank()
+        else:
+            self.status = self.check_string()
+
+    def check_null(self):
+        return False
+
+    def check_string(self):
+        seq = filter(lambda d: ord(d) > 255 or ord(d) < 32, ','.join(self.field_value).split(','))
+        return False if list(seq) else True
+
+    def check_string_no_blank(self):
+        codes_list = [*list(range(33, 126)),
+                      128,
+                      *list(range(130, 140)),
+                      142,
+                      *list(range(142, 156)),
+                      *list(range(158, 159)),
+                      *list(range(161, 172)),
+                      *list(range(174, 255))]
+
+        field_value = self.field_value.strip()
+
+        for ch in field_value:
+            if ord(ch) not in codes_list:
+                return False
+        else:
+            return True
+
+
 class Same(BaseRule):
     name = 'same'
     message = _('the input value is not same as the value of {PARAM_FIELD}')
@@ -1261,5 +1301,6 @@ default_rules = {
     Same.get_name(): Same,
     Decimal.get_name(): Decimal,
     Exist.get_name(): Exist,
-    UniqueAgainst.get_name(): UniqueAgainst
+    UniqueAgainst.get_name(): UniqueAgainst,
+    PrintableASCII.get_name(): PrintableASCII
 }
