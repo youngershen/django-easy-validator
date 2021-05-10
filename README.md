@@ -640,3 +640,14 @@ assert validator.validate()
 custom a validation rule is very easy, you just import the BaseRule and implements the method ,
 the most important thing is before you use your rule , you should pass it to your validator 
 class when it init through the extra_rules parameter.
+
+
+##  development
+
+1. clone the project
+2. pip install dev.txt
+3. fix some bugs
+4. add test case in tests/tests.py
+5. run pytest command in terminal and make sure your code is ok
+6. push and make a pull request
+7. or you can run python setup.py bdist_wheel / sdist to upload the package
