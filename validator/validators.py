@@ -10,7 +10,21 @@ import re
 import socket
 import datetime
 from copy import deepcopy
-from django.utils.translation import gettext_lazy as _
+
+try:
+    # django not installed
+    from django import utils
+except ImportError:
+    def _(text):
+        return text
+else:
+    try:
+        # django not configured
+        from django.core.exceptions import ImproperlyConfigured
+        from django.utils.translation import gettext_lazy as _
+    except ImproperlyConfigured:
+        def _(text):
+            return text
 
 
 class RuleNotFoundError(Exception):
@@ -46,7 +60,10 @@ class BaseRule:
         self.data = data
 
     def check(self):
-        self.check_value() if self.field_value else self.check_null()
+        if self.field_value:
+            self.check_value()
+        else:
+            self.check_null()
 
     def check_value(self):
         raise NotImplementedError()
@@ -1051,29 +1068,36 @@ class PrintableASCII(BaseRule):
             self.status = self.check_string()
 
     def check_null(self):
-        return False
+        self.status = False
 
     def check_string(self):
-        seq = filter(lambda d: ord(d) > 255 or ord(d) < 32, ','.join(self.field_value).split(','))
+        if not self.field_value:
+            return False
+
+        seq = filter(lambda d: ord(d) > 255, ','.join(self.field_value).split(','))
         return False if list(seq) else True
 
     def check_string_no_blank(self):
-        codes_list = [*list(range(33, 126)),
-                      128,
-                      *list(range(130, 140)),
-                      142,
-                      *list(range(142, 156)),
-                      *list(range(158, 159)),
-                      *list(range(161, 172)),
-                      *list(range(174, 255))]
+        code_list = [
+            *list(range(33, 126)),
+            128,
+            *list(range(130, 140)),
+            142,
+            *list(range(142, 156)),
+            *list(range(158, 159)),
+            *list(range(161, 172)),
+            *list(range(174, 255))]
 
         field_value = self.field_value.strip()
 
-        for ch in field_value:
-            if ord(ch) not in codes_list:
-                return False
+        if not field_value:
+            return False
         else:
-            return True
+            for ch in field_value:
+                if ord(ch) not in code_list:
+                    return False
+            else:
+                return True
 
 
 class Same(BaseRule):

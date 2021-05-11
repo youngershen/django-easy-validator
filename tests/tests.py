@@ -421,7 +421,7 @@ class UniqueAgainst(Validator):
 
 
 class PrintableASCII(Validator):
-    username = 'pascii:true'
+    username = 'pascii'
 
     message = {
         'username': {
@@ -429,6 +429,15 @@ class PrintableASCII(Validator):
         }
     }
 
+
+class PrintableASCIINoBlank(Validator):
+    username = 'pascii:true'
+
+    message = {
+        'username': {
+            'pascii': '用户名不能为空'
+        }
+    }
 # ======================================================================================================================
 
 
@@ -1616,10 +1625,48 @@ class PrintableASCIITestCase(TestCase):
     def setUp(self):
         self.validator = PrintableASCII
         self.valid_data = {
-            'username': 'abcde@123'
+            'username': 'abcdef@123456'
         }
         self.invalid_data = {
-            'username': ' younger shen '
+            'username': chr(555)
+        }
+        self.valid_data_blank = {
+            'username': '       '
+        }
+        self.message = {
+            'username': {
+                'pascii': '用户名不能为空'
+            }
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        self.assertTrue(validator.validate())
+
+        validator = self.validator(self.valid_data_blank)
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+        validator = self.validator(self.valid_data_blank)
+        self.assertTrue(validator.validate())
+
+
+class PrintableASCIINoBlankTestCase(TestCase):
+    def setUp(self):
+        self.validator = PrintableASCIINoBlank
+        self.valid_data = {
+            'username': 'abcdef@123456'
+        }
+        self.invalid_data = {
+            'username': chr(555)
+        }
+        self.invalid_data_blank = {
+            'username': '       '
         }
         self.message = {
             'username': {
@@ -1633,6 +1680,11 @@ class PrintableASCIITestCase(TestCase):
 
     def test_invalid(self):
         validator = self.validator(self.invalid_data)
+        self.assertFalse(validator.validate())
+        message = validator.get_message()
+        self.assertDictEqual(message, self.message)
+
+        validator = self.validator(self.invalid_data_blank)
         self.assertFalse(validator.validate())
         message = validator.get_message()
         self.assertDictEqual(message, self.message)
