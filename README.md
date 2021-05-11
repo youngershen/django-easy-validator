@@ -651,3 +651,4 @@ class when it init through the extra_rules parameter.
 5. run pytest command in terminal and make sure your code is ok
 6. push and make a pull request
 7. or you can run python setup.py bdist_wheel / sdist to upload the package
+8. then just run twine uplaod ./dist/* to upload package to pypi
