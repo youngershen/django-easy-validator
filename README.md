@@ -605,6 +605,16 @@ class UniqueAgainstValidator(Validator):
     username = 'required|unique_against:AUTH_USER_MODEL, username, youngershen'
 ```
 
+### pascii
+
+pascii ensure the input string must be a ascii string and it can't contians the unprintable
+ascii characters.
+
+```python
+class PASCIIValidator(Validator):
+    username = 'required|pascii'
+```
+
 the unique_against validator check weather the given value column exists in the database and against the third parameter.
 
 ## Advanced Topic
