@@ -509,8 +509,12 @@ class Required(BaseRule):
         self.status = False
 
     def check_value(self):
-        pass
+        try:
+            value_str = str(self.field_value).strip()
+        except ValueError:
+            value_str = ''
 
+        self.status = True if value_str else False
 
 class Accepted(BaseRule):
     name = 'accepted'

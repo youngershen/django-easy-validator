@@ -446,7 +446,7 @@ class RequiredTestCase(TestCase):
         self.validator = Required
 
         self.valid_data = {
-            'username': 'batman'
+            'username': 'test'
         }
 
         self.invalid_data = {

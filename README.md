@@ -10,6 +10,12 @@ you can use this software to validate your POST/GET data easily and softly.
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-easy-validator.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/youngershen/django-easy-validator.svg)
 
+## TODO
+
+* IPv4 pattern support
+* IPv6 pattern support
+* URL pattern support
+* 
 
 ## Requirementse
 
