@@ -1068,7 +1068,7 @@ class PrintableASCII(BaseRule):
             self.status = self.check_string()
 
     def check_null(self):
-        self.status = False
+        self.status = True
 
     def check_string(self):
         if not self.field_value:
@@ -1160,8 +1160,12 @@ class Exist(Unique):
     def check_model(self):
         model_name, model_field = self.args
         model = self.get_model(model_name)
-        qs = model.objects.filter(**{model_field: self.field_value})
-        return qs.exists()
+        try:
+            qs = model.objects.filter(**{model_field: self.field_value})
+        except ValueError:
+            return False
+        else:
+            return qs.exists()
 
 
 class UniqueAgainst(Unique):

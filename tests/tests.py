@@ -413,7 +413,7 @@ class Decimal(Validator):
 
 
 class Exist(Validator):
-    username = 'required|exist:AUTH_USER_MODEL,username'
+    uid = 'required|exist:AUTH_USER_MODEL,id'
 
 
 class UniqueAgainst(Validator):
@@ -1570,10 +1570,10 @@ class ExistTestCase(TestCase):
         self.setup_users()
         self.validator = Exist
         self.valid_data = {
-            'username': 'youngershen'
+            'uid': '1'
         }
         self.invalid_data = {
-            'username': 'bear'
+            'uid': 'test'
         }
 
     def test_valid(self):
