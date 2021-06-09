@@ -499,7 +499,23 @@ class DatetimeAfter(BaseRule):
         return datetime.datetime.strptime(datetime_str, self.param_format_str)
 
 
-# FIX: thie required should filter the space in the given value
+class Unblank(BaseRule):
+    name = 'unblank'
+    message = _('{FIELD} field is should not be blank')
+    description = _('the given field should not be blank')
+
+    def check_null(self):
+        pass
+
+    def check_value(self):
+        try:
+            value_str = str(self.field_value).strip()
+        except ValueError:
+            value_str = ''
+
+        self.status = True if value_str else False
+
+
 class Required(BaseRule):
     name = 'required'
     message = _('{FIELD} field is required')
@@ -515,6 +531,7 @@ class Required(BaseRule):
             value_str = ''
 
         self.status = True if value_str else False
+
 
 class Accepted(BaseRule):
     name = 'accepted'
@@ -1334,5 +1351,6 @@ default_rules = {
     Decimal.get_name(): Decimal,
     Exist.get_name(): Exist,
     UniqueAgainst.get_name(): UniqueAgainst,
-    PrintableASCII.get_name(): PrintableASCII
+    PrintableASCII.get_name(): PrintableASCII,
+    Unblank.get_name(): Unblank
 }

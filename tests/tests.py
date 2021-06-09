@@ -438,7 +438,56 @@ class PrintableASCIINoBlank(Validator):
             'pascii': '用户名不能为空'
         }
     }
+
+
+class Unblank(Validator):
+    msg = 'unblank'
+
+    message = {
+        'msg': {
+            'unblank': 'msg is not be able to be blank'
+        }
+    }
+
+
 # ======================================================================================================================
+
+
+class UnblankTestCase(TestCase):
+    def setUp(self):
+        self.validator = Unblank
+        self.valid_data = {
+            'msg': 'hello'
+        }
+        self.invalid_data = {
+            'msg': ''
+        }
+
+        self.invalid_data2 = {
+            'msg': '\r\n\r\n'
+        }
+
+        self.invalid_data3 = {
+            'msg2': 'test'
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        validator.validate()
+        self.assertTrue(validator.get_status())
+
+        validator = self.validator(self.invalid_data2)
+        validator.validate()
+        self.assertFalse(validator.get_status())
+
+        validator = self.validator(self.invalid_data3)
+        validator.validate()
+        self.assertTrue(validator.get_status())
 
 
 class RequiredTestCase(TestCase):

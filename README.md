@@ -623,6 +623,15 @@ class PASCIIValidator(Validator):
 
 the unique_against validator check weather the given value column exists in the database and against the third parameter.
 
+
+### unblank
+
+unblank make the given field must be a none-blank string, it could be empty, but if it is not empyt, it should be a unblank
+string.
+
+the rule indicates the given field shoud be empty string or it should be a none-empty string, like '\r\n\r\n' it will return a 
+False, becaus  '\r\n' is A **empty** string, the '' wille return True, because it is a normal empty string. 
+
 ## Advanced Topic
 
 ### Custom Validation Rules
