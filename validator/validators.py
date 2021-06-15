@@ -1157,13 +1157,13 @@ class Decimal(BaseRule):
         self.status = self.check_decimal()
 
     def check_decimal(self):
-        r = r'^[0-9]+(\.[0-9]+)?$'
+        r = r'^([\+\-])?[0-9]+(\.[0-9]+)?$'
         m = re.fullmatch(r, str(self.field_value))
 
         return True if m else False
 
     def check_null(self):
-        self.check()
+        pass
 
     def check_value(self):
         self.check()

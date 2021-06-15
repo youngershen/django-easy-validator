@@ -1600,8 +1600,19 @@ class DecimalTestCase(TestCase):
     def setUp(self):
         self.validator = Decimal
         self.valid_data = {
+            'price': '-123.456'
+        }
+        self.valid_data1 = {
+            'price': '+123.456'
+        }
+        self.valid_data2 = {
             'price': 123.456
         }
+
+        self.valid_data3 = {
+            'price': -123.456
+        }
+
         self.invalid_data = {
             'price': 'abcdef'
         }
@@ -1609,6 +1620,15 @@ class DecimalTestCase(TestCase):
     def test_valid(self):
         validator = self.validator(self.valid_data)
         self.assertTrue(validator.validate())
+
+        validator = self.validator(self.valid_data1)
+        self.assertTrue(validator.validate())
+
+        validator = self.validator(self.valid_data2)
+        self.assertTrue(validator.validate())
+
+        validator = self.validator(self.valid_data3)
+        self.assertFalse(validator.validate())
 
         validator = self.validator(self.invalid_data)
         self.assertFalse(validator.validate())
