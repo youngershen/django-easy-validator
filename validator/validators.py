@@ -1153,9 +1153,6 @@ class Decimal(BaseRule):
     message = _('the input value {VALUE} of {FIELD} is not a decimal format number')
     description = _('')
 
-    def check(self):
-        self.status = self.check_decimal()
-
     def check_decimal(self):
         r = r'^([\+\-])?[0-9]+(\.[0-9]+)?$'
         m = re.fullmatch(r, str(self.field_value))
@@ -1166,7 +1163,7 @@ class Decimal(BaseRule):
         pass
 
     def check_value(self):
-        self.check()
+        self.status = self.check_decimal()
 
     def get_message(self):
         return self.message.format(FIELD=self.field_name,

@@ -1628,7 +1628,7 @@ class DecimalTestCase(TestCase):
         self.assertTrue(validator.validate())
 
         validator = self.validator(self.valid_data3)
-        self.assertFalse(validator.validate())
+        self.assertTrue(validator.validate())
 
         validator = self.validator(self.invalid_data)
         self.assertFalse(validator.validate())
