@@ -610,19 +610,16 @@ the exist rule just check the given field record weather exists in the database 
 class UniqueAgainstValidator(Validator):
     username = 'required|unique_against:AUTH_USER_MODEL, username, youngershen'
 ```
+the unique_against validator check weather the given value column exists in the database and against the third parameter.
 
 ### pascii
-
-pascii ensure the input string must be a ascii string and it can't contians the unprintable
-ascii characters.
 
 ```python
 class PASCIIValidator(Validator):
     username = 'required|pascii'
 ```
-
-the unique_against validator check weather the given value column exists in the database and against the third parameter.
-
+pascii ensure the input string must be a ascii string and it can't contians the unprintable
+ascii characters.
 
 ### unblank
 
@@ -631,6 +628,26 @@ string.
 
 the rule indicates the given field shoud be empty string or it should be a none-empty string, like '\r\n\r\n' it will return a 
 False, becaus  '\r\n' is A **empty** string, the '' wille return True, because it is a normal empty string. 
+
+### integer
+
+this rule check the give value if it's a proper decimal integer
+
+### pos_integer
+
+the positive value version the integer value
+
+### neg_integer
+
+the negative value version the integer value
+
+### percentage
+
+check the give value if it's a integer  value from 0 to 100
+
+### ip_address
+
+just check the given value if it's a ip address, both checks for ip v4 and v6 address.
 
 ## Advanced Topic
 

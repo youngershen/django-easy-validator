@@ -198,7 +198,7 @@ class Regex(BaseRule):
         return self.args
 
     def _match(self):
-        return re.match(self._get_regex(), self.field_value)
+        return re.match(self._get_regex(), str(self.field_value))
 
 
 class Email(BaseRule):
@@ -1156,7 +1156,6 @@ class Decimal(BaseRule):
     def check_decimal(self):
         r = r'^([\+\-])?[0-9]+(\.[0-9]+)?$'
         m = re.fullmatch(r, str(self.field_value))
-
         return True if m else False
 
     def check_null(self):
@@ -1203,6 +1202,73 @@ class UniqueAgainst(Unique):
                                    MODEL_FIELD=self.args[1],
                                    MODEL_VALUE=self.args[2],
                                    VALUE=self.field_value)
+
+
+# just for normal integer includes 0, positive integer and negative integer all takes decimal
+class Integer(Regex):
+    name = 'integer'
+    message = 'the given value {VALUE} for {FIELD} field is not a proper decimal integer'
+    description = _('check the given value if fits the decimal integer')
+    parse_args = False
+
+    def _get_regex(self):
+        pattern = r'^[+-]*[1-9]+[0-9]*$'
+        return pattern
+
+
+class PositiveInteger(Regex):
+    name = 'pos_integer'
+    message = 'the given value {VALUE} for {FIELD} field is not a proper positive decimal integer'
+    description = 'check the given value if fits the positive decimal integer'
+
+    def _get_regex(self):
+        pattern = r'^[+]*[1-9]+[0-9]*$'
+        return pattern
+
+
+class NegativeInteger(Regex):
+    name = 'neg_integer'
+    message = 'the given value {VALUE} for {FIELD} field is not a proper negative decimal integer'
+    description = 'check the given value if fits the negative decimal integer'
+
+    def _get_regex(self):
+        pattern = r'^[-]+[1-9]+[0-9]*$'
+        return pattern
+
+
+class Percentage(BaseRule):
+    name = 'percentage'
+    message = 'the give value {VALUE} is for {FIELD} field is not a positive integer from 0 to 100'
+    description = 'the give value must be a integer from 0 to 100'
+
+    def check_null(self):
+        pass
+
+    def check_value(self):
+        try:
+            value = int(self.field_value)
+        except ValueError:
+            self.status = False
+        else:
+            self.status = True if 0 <= value <= 100 else False
+
+
+class IPAddress(BaseRule):
+    name = 'ip_address'
+    message = 'the given value {VALUE} for {FIELD} field is not a ipv4 or v6 address'
+    description = _('check the given value if it is a proper ipv4 or v6 address')
+
+    def check_null(self):
+        pass
+
+    def check_value(self):
+        import ipaddress
+        try:
+            ipaddress.ip_address(self.field_value)
+        except ValueError:
+            self.status = False
+        else:
+            self.status = True
 
 
 class MetaValidator(type):
@@ -1349,5 +1415,10 @@ default_rules = {
     Exist.get_name(): Exist,
     UniqueAgainst.get_name(): UniqueAgainst,
     PrintableASCII.get_name(): PrintableASCII,
-    Unblank.get_name(): Unblank
+    Unblank.get_name(): Unblank,
+    Integer.get_name(): Integer,
+    PositiveInteger.get_name(): PositiveInteger,
+    NegativeInteger.get_name(): NegativeInteger,
+    IPAddress.get_name(): IPAddress,
+    Percentage.get_name(): Percentage
 }

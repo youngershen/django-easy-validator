@@ -432,7 +432,6 @@ class PrintableASCII(Validator):
 
 class PrintableASCIINoBlank(Validator):
     username = 'pascii:true'
-
     message = {
         'username': {
             'pascii': '用户名不能为空'
@@ -442,7 +441,6 @@ class PrintableASCIINoBlank(Validator):
 
 class Unblank(Validator):
     msg = 'unblank'
-
     message = {
         'msg': {
             'unblank': 'msg is not be able to be blank'
@@ -450,7 +448,209 @@ class Unblank(Validator):
     }
 
 
+class Integer(Validator):
+    age = 'integer'
+
+    message = {
+        'age': {
+            'integer': 'this it not a integer'
+        }
+    }
+
+
+class PosInteger(Validator):
+    age = 'pos_integer'
+    message = {
+        'age': {
+            'pos_integer': 'this it not a pos integer'
+        }
+    }
+
+
+class NegInteger(Validator):
+    neg = 'neg_integer'
+    message = {
+        'neg': {
+            'neg_integer': 'this is not a neg integer'
+        }
+    }
+
+
+class Percentage(Validator):
+    discount = 'percentage'
+    message = {
+        'discount': {
+            'percentage': 'this is not a precentage value'
+        }
+    }
+
+
+class IPAddress(Validator):
+    ip = 'ip_address'
+
+    message = {
+        'ip': {
+            'ip_address': 'this is not an ip address'
+        }
+    }
+
 # ======================================================================================================================
+
+
+class IPAddressTestCase(TestCase):
+    def setUp(self) -> None:
+        self.validator = IPAddress
+        self.valid_data = {
+            'ip': '127.0.0.1'
+        }
+        self.valid_data2 = {
+            'ip': '2001:0db8:85a3:0000:0000:8a2e:0370:7334'
+        }
+
+        self.invalid_data = {
+            'ip': '-10'
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+        validator = self.validator(self.valid_data2)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        validator.validate()
+        self.assertFalse(validator.validate())
+
+
+class PercentageTestCase(TestCase):
+    def setUp(self) -> None:
+        self.validator = Percentage
+        self.valid_data = {
+            'discount': '10'
+        }
+        self.invalid_data = {
+            'discount': '-10'
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        validator.validate()
+        self.assertFalse(validator.validate())
+
+
+class NegIntegerTestCase(TestCase):
+    def setUp(self) -> None:
+        self.validator = NegInteger
+        self.valid_data = {
+            'neg': '-1'
+        }
+        self.valid_data2 = {
+            'neg': -2
+        }
+        self.invalid_data = {
+            'neg': '2'
+        }
+        self.invalid_data2 = {
+            'neg': 2
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+        validator = self.validator(self.valid_data2)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        validator.validate()
+        self.assertFalse(validator.validate())
+
+        validator = self.validator(self.invalid_data2)
+        validator.validate()
+        self.assertFalse(validator.validate())
+
+
+class PosIntegerTestCase(TestCase):
+    def setUp(self) -> None:
+        self.validator = PosInteger
+        self.valid_data = {
+            'age': 32
+        }
+        self.valid_data2 = {
+            'age': '+32'
+        }
+
+        self.invalid_data = {
+            'age': '-32'
+        }
+        self.invalid_data2 = {
+            'age': '-1'
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+        validator = self.validator(self.valid_data2)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        validator.validate()
+        self.assertFalse(validator.validate())
+
+        validator = self.validator(self.invalid_data2)
+        validator.validate()
+        self.assertFalse(validator.validate())
+
+
+class IntegerTestCase(TestCase):
+    def setUp(self):
+        self.validator = Integer
+        self.valid_data = {
+            'age': '10'
+        }
+        self.valid_data2 = {
+            'age': ''
+        }
+        self.invalid_data = {
+            'age': 'aa'
+        }
+        self.invalid_data2 = {
+            'age': '-b'
+        }
+
+    def test_valid(self):
+        validator = self.validator(self.valid_data)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+        validator = self.validator(self.valid_data2)
+        validator.validate()
+        self.assertTrue(validator.validate())
+
+    def test_invalid(self):
+        validator = self.validator(self.invalid_data)
+        validator.validate()
+        self.assertFalse(validator.validate())
+
+        validator = self.validator(self.invalid_data2)
+        validator.validate()
+        self.assertFalse(validator.validate())
 
 
 class UnblankTestCase(TestCase):
