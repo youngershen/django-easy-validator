@@ -122,6 +122,19 @@ class Alphabet(BaseRule):
         self.status = True if re.match(self.regex, self.field_value) else False
 
 
+class Json(BaseRule):
+    """
+    TODO add a rule to check json string
+    """
+
+
+class Length(BaseRule):
+    """
+    TODO  just to limit the length of the string
+    """
+    name = 'length'
+
+
 class MinLength(BaseRule):
     name = 'min_length'
     message = _('{VALUE} of {FIELD} is shotter than {MIN}')
@@ -166,6 +179,7 @@ class IDS(BaseRule):
 
 
 class Cellphone(BaseRule):
+    # TODO fix different cellphone formats in different countries
     name = 'cellphone'
     regex = r'^([\+]?[0-9]{2})?1[0-9]{10}$'
     message = _('{VALUE} of {FIELD} is not a cellphone number')
@@ -215,6 +229,7 @@ class Email(BaseRule):
 
 
 class Digits(BaseRule):
+    # TODO add length control in digits rule
     name = 'digits'
     message = _('{VALUE} of {FIELD} is not match digits')
     description = _('check if the given value is made of digits')
