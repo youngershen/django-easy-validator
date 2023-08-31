@@ -22,7 +22,8 @@ you can use this software to validate your POST/GET data easily and softly.
 * 为 digits 增加一个参数来标识总共有多少位
 * 增加一个 length 规则来标识字符串必须有多少位
 * flaot 规则表示浮点数
-* 
+* negative-number 用来标识负整数
+* negative-float 用来标识负的浮点数
 
 ## Requirementse
 
