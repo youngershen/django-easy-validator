@@ -15,6 +15,13 @@ you can use this software to validate your POST/GET data easily and softly.
 * IPv4 pattern support
 * IPv6 pattern support
 * URL pattern support
+* 新增一个 str 格式用来校验所有的非空输入
+* 新增一个规则用来表示允许所有的文本输入，但是需要顾虑掉 html 标签防止 js 注入等问题, tag: safe_text
+* 进一步优化代码
+* 增加一个 nature number 规则来标识自然数
+* 为 digits 增加一个参数来标识总共有多少位
+* 增加一个 length 规则来标识字符串必须有多少位
+* flaot 规则表示浮点数
 * 
 
 ## Requirementse
