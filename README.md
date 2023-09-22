@@ -24,6 +24,7 @@ you can use this software to validate your POST/GET data easily and softly.
 * flaot 规则表示浮点数
 * negative-number 用来标识负整数
 * negative-float 用来标识负的浮点数
+* 新增 price 规则用来验证支付金额等场景得多位的小数类型，与 mysql 中的  decimal 相匹配
 
 ## Requirementse
 
